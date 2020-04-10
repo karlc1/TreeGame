@@ -18,12 +18,18 @@ func NewWorld() *World {
 		PhysWorld: &world,
 	}
 
-	//ground := g.NewBox(false, 10, -7, 10, 5)
-	//_ = ground
+	ground := g.NewBox(false, 320, 50, 100, 10)
+	_ = ground
+	//ground.SetDensity(3)
+	//ground.SetFriction(3)
 
-	player := g.NewBox(true, 20, 20, 1, 2)
-	player.SetDensity(2)
+	player := g.NewBox(true, 200, 200, 20, 20)
+	player.SetDensity(1)
 	player.SetFriction(0.3)
+
+	test := g.NewBox(true, 200, 250, 10, 20)
+	test.SetDensity(1000)
+	test.SetFriction(200)
 
 	g.Player = player
 
@@ -40,6 +46,7 @@ type Box struct {
 
 func (b *Box) SetDensity(d float64) {
 	b.Fixture.SetDensity(d)
+	b.Body.ResetMassData()
 }
 
 func (b *Box) SetFriction(f float64) {

@@ -11,20 +11,20 @@ var tempPos int32 = 0
 
 func DrawBox(box *physics.Box) {
 	pos := box.Body.GetPosition()
-	angle64 := box.Body.GetAngle()
 	width := box.Width
 	height := box.Height
 
+	angle64 := box.Body.GetAngle()
 	rect := rl.Rectangle{
-		Width:  float32(width) * 10,
-		Height: float32(height) * 10,
+		Width:  float32(width),
+		Height: float32(height),
 		X:      float32(pos.X),
 		Y:      float32(pos.Y),
 	}
 
 	origin := rl.Vector2{
-		X: float32(pos.X),
-		Y: float32(pos.Y),
+		X: float32(width / 2),
+		Y: float32(height / 2),
 	}
 
 	angle := float32(angle64)
@@ -37,6 +37,8 @@ func DrawBox(box *physics.Box) {
 		width, height, pos.X, pos.Y, angle)
 
 	rl.DrawRectanglePro(rect, origin, angle, colors)
+
+	//rl.DrawRectangle(int32(pos.X), int32(pos.Y), int32(width), int32(height), rl.White)
 }
 
 func DrawWorld(world *physics.World) {

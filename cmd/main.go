@@ -1,7 +1,7 @@
 package main
 
 import (
-	"karlc/treegame/internal/physics"
+	"karlc/treegame/internal/models"
 	"karlc/treegame/internal/render"
 
 	"github.com/ByteArena/box2d"
@@ -9,21 +9,22 @@ import (
 )
 
 const (
-	SCREEN_WITH   = 800
+	SCREEN_WITH   = 1200
 	SCREEN_HEIGHT = 600
 	TARGET_FPS    = 60
 )
 
 func main() {
+
 	rl.InitWindow(SCREEN_WITH, SCREEN_HEIGHT, "")
 	rl.SetTargetFPS(TARGET_FPS)
 
-	world := physics.NewWorld()
+	world := models.NewPhysicalWorld()
 	renderer := render.NewRenderer(SCREEN_WITH, SCREEN_HEIGHT)
 
 	timeStep := 1.0 / TARGET_FPS
-	velocityIterations := 200
-	positionIterations := 200
+	velocityIterations := 2
+	positionIterations := 2
 
 	for !rl.WindowShouldClose() {
 

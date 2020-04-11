@@ -1,21 +1,21 @@
-package physics
+package models
 
 import (
 	"github.com/ByteArena/box2d"
 )
 
-type World struct {
+type PhysicalWorld struct {
 	PhysWorld *box2d.B2World
 	Boxes     []*Box //TODO: use dict with pointer keys?
 	Player    *Box
 }
 
-func NewWorld() *World {
+func NewPhysicalWorld() *PhysicalWorld {
 	gravity := box2d.MakeB2Vec2(0, -50)
 
 	world := box2d.MakeB2World(gravity)
 
-	g := &World{
+	g := &PhysicalWorld{
 		PhysWorld: &world,
 	}
 
@@ -54,11 +54,19 @@ func (b *Box) SetFriction(f float64) {
 	b.Fixture.SetFriction(f)
 }
 
-func (b *Box) GetPosition() box2d.B2Vec2 {
-	return b.Body.M_xf.P
+func (b *Box) GetPosition() (float32, float32) {
+	return float32(b.Body.M_xf.P.X), float32(b.Body.M_xf.P.Y)
 }
 
-func (w *World) NewBox(dynamic bool, posX, posY, width, height float64) *Box {
+func (b *Box) GetSize() (float32, float32) {
+	return float32(b.Width), float32(b.Height)
+}
+
+func (b *Box) GetAngle() float64 {
+	return b.Body.GetAngle()
+}
+
+func (w *PhysicalWorld) NewBox(dynamic bool, posX, posY, width, height float64) *Box {
 	boxDef := box2d.MakeB2BodyDef()
 
 	// static by default, only check if static

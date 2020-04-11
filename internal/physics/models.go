@@ -11,7 +11,7 @@ type World struct {
 }
 
 func NewWorld() *World {
-	gravity := box2d.MakeB2Vec2(0, -10)
+	gravity := box2d.MakeB2Vec2(0, -50)
 
 	world := box2d.MakeB2World(gravity)
 
@@ -19,18 +19,18 @@ func NewWorld() *World {
 		PhysWorld: &world,
 	}
 
-	ground := g.NewBox(false, 280, 50, 100, 10)
+	ground := g.NewBox(false, 0, 50, 100, 10)
 	_ = ground
 	//ground.SetDensity(3)
 	//ground.SetFriction(3)
 
 	player := g.NewBox(true, 200, 200, 20, 20)
 	player.SetDensity(10)
-	player.SetFriction(20)
+	player.SetFriction(4)
 
 	test := g.NewBox(true, 200, 250, 10, 20)
 	test.SetDensity(10)
-	test.SetFriction(20)
+	test.SetFriction(4)
 
 	g.Player = player
 

@@ -21,28 +21,24 @@ func NewRenderer(w, h int) *Renderer {
 
 func (r *Renderer) DrawBox(box *physics.Box) {
 	pos := box.Body.GetPosition()
-	width := box.Width
-	height := box.Height
-
-	angle64 := box.Body.GetAngle()
 
 	rect := rl.Rectangle{
-		Width:  float32(width),
-		Height: float32(height),
-		X:      float32(pos.X),
-		// Invert Y axis since box2d and
-		// raylib has vertically opposed Y axis
+		Width:  float32(box.Width),
+		Height: float32(box.Height),
+		// invert x and y axis since raylib and box2d
+		// uses mirrored coordinate systems
+		X: float32(float64(r.screenWidth) - pos.X),
 		Y: float32(float64(r.screenHeight) - pos.Y),
 	}
 
 	origin := rl.Vector2{
-		X: float32(width / 2),
-		Y: float32(height / 2),
+		X: float32(box.Width / 2),
+		Y: float32(box.Height / 2),
 	}
 
 	// box2d uses radians, raylib uses degrees
 	// this converts the angle to degrees
-	angle := float32(angle64 * (180 / math.Pi))
+	angle := float32(box.Body.GetAngle() * (180 / math.Pi))
 
 	colors := []rl.Color{
 		rl.White,

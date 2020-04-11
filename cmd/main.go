@@ -39,12 +39,12 @@ func main() {
 
 		if rl.IsKeyDown(rl.KeyRight) {
 			impulse := world.Player.Body.GetMass() * 50
-			world.Player.Body.ApplyLinearImpulse(box2d.MakeB2Vec2(impulse, 0), world.Player.Body.GetWorldCenter(), true)
+			world.Player.Body.ApplyLinearImpulse(box2d.MakeB2Vec2(-impulse, 0), world.Player.Body.GetWorldCenter(), true)
 		}
 
 		if rl.IsKeyDown(rl.KeyLeft) {
 			impulse := world.Player.Body.GetMass() * 50
-			world.Player.Body.ApplyLinearImpulse(box2d.MakeB2Vec2(-impulse, 0), world.Player.Body.GetWorldCenter(), true)
+			world.Player.Body.ApplyLinearImpulse(box2d.MakeB2Vec2(impulse, 0), world.Player.Body.GetWorldCenter(), true)
 		}
 
 		world.PhysWorld.Step(

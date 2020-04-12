@@ -1,6 +1,7 @@
 package render
 
 import (
+	"fmt"
 	"karlc/treegame/internal/models"
 )
 
@@ -26,14 +27,15 @@ func (c *Camera) AttachTo(b *models.Actor) {
 	c.attachedTo = b
 }
 
-func (c *Camera) DrawActor(actor models.Actor) {
+func (c *Camera) DrawActor(actor models.Actor, debug bool) {
 
 	// TODO: determine if the actor is within the viewport
 	// if not, just return
 
 	aX, aY := actor.GetPosition()
-	adjustedX := aX - c.PosX
-	adjustedY := aY - c.PosY
+
+	adjustedX := aX - c.PosX + float32(c.viewportWidth/2)
+	adjustedY := aY - c.PosY + float32(c.viewportHeight/2)
 
 	aW, aH := actor.GetSize()
 
@@ -42,9 +44,20 @@ func (c *Camera) DrawActor(actor models.Actor) {
 
 	angle := actor.GetAngle()
 
+	if debug {
+		fmt.Printf("W: %v \n H: %v \n X: %v \n Y: %v \n \n", adjustedW, adjustedH, adjustedX, adjustedY)
+	}
+
 	c.renderer.DrawRect(adjustedX, adjustedY, adjustedW, adjustedH, float32(angle))
 }
 
-func NewCamera() *Camera {
-	return &Camera{PosX: 0, PosY: 0}
+func NewCamera(w, h int, renderer Renderer, scale int) *Camera {
+	return &Camera{
+		PosX:           0,
+		PosY:           0,
+		renderer:       renderer,
+		viewportWidth:  w,
+		viewportHeight: h,
+		unitScale:      scale,
+	}
 }

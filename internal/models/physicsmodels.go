@@ -24,15 +24,9 @@ func NewPhysicalWorld() *PhysicalWorld {
 	//ground.SetDensity(3)
 	//ground.SetFriction(3)
 
-	player := g.NewBox(true, 200, 200, 20, 20)
-	player.SetDensity(10)
-	player.SetFriction(4)
-
 	test := g.NewBox(true, 200, 250, 10, 20)
 	test.SetDensity(10)
 	test.SetFriction(4)
-
-	g.Player = player
 
 	return g
 }

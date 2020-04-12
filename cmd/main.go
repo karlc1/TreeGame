@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"karlc/treegame/internal/models"
 	"karlc/treegame/internal/render"
+	"karlc/treegame/internal/utils"
 
 	"github.com/ByteArena/box2d"
 	rl "github.com/gen2brain/raylib-go/raylib"
@@ -27,13 +28,29 @@ func main() {
 	velocityIterations := 2
 	positionIterations := 2
 
-	player := world.NewBox(true, 0, 0, 2, 2)
+	player := world.NewBox(true, -29, 10, 1, 1.5)
 	player.SetDensity(10)
 	player.SetFriction(4)
 	world.Player = player
 
-	ground := world.NewBox(false, 0, -20, 100, 1)
+	ground := world.NewBox(false, 0, -20, 100, 0.5)
 	_ = ground
+
+	decor := make([]*models.DecorBox, 400, 400)
+	for i := range decor {
+		size := utils.RandFloat32(0, 0.4)
+		posX := utils.RandFloat32(-100, 100)
+		posY := utils.RandFloat32(-15, 30)
+
+		fmt.Printf("PosX: %v, PosY: %v \n", posX, posY)
+
+		decor[i] = &models.DecorBox{
+			Height: size,
+			Width:  size,
+			PosX:   posX,
+			PosY:   posY,
+		}
+	}
 
 	//test := world.NewBox(true, 0, 30, 4, 1)
 	//test.SetDensity(10)
@@ -79,15 +96,16 @@ func main() {
 
 		_ = camera
 
-		// remove
-		ppX, ppY := player.GetPosition()
-		fmt.Printf("%v   %v \n", ppX, ppY)
-
 		rl.BeginDrawing()
 		rl.ClearBackground(rl.Black)
 		camera.DrawActor(player, false)
 		camera.DrawActor(ground, false)
 		//camera.DrawActor(test, false)
+
+		for _, e := range decor {
+			camera.DrawActor(e, false)
+		}
+
 		rl.EndDrawing()
 	}
 }

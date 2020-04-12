@@ -40,6 +40,7 @@ func (r *Renderer) DrawRect(x, y, w, h, a float32) {
 
 	colors := []rl.Color{
 		rl.White,
+		//rl.Green,
 	}
 
 	rl.DrawRectanglePro(rect, origin, angle, colors)

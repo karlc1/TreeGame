@@ -32,31 +32,32 @@ func main() {
 	player.SetFriction(4)
 	world.Player = player
 
-	ground := world.NewBox(false, 0, -50, 10, 1)
+	ground := world.NewBox(false, 0, -20, 100, 1)
+	_ = ground
 
-	test := world.NewBox(true, 0, 30, 4, 1)
-	test.SetDensity(10)
-	test.SetFriction(4)
+	//test := world.NewBox(true, 0, 30, 4, 1)
+	//test.SetDensity(10)
+	//test.SetFriction(4)
 
 	for !rl.WindowShouldClose() {
 
 		if rl.IsKeyDown(rl.KeyUp) {
-			impulse := world.Player.Body.GetMass() * 50
+			impulse := world.Player.Body.GetMass() * 2
 			world.Player.Body.ApplyLinearImpulse(box2d.MakeB2Vec2(0, impulse), world.Player.Body.GetWorldCenter(), true)
 		}
 
 		if rl.IsKeyDown(rl.KeyDown) {
-			impulse := world.Player.Body.GetMass() * 50
+			impulse := world.Player.Body.GetMass() * 2
 			world.Player.Body.ApplyLinearImpulse(box2d.MakeB2Vec2(0, -impulse), world.Player.Body.GetWorldCenter(), true)
 		}
 
 		if rl.IsKeyDown(rl.KeyRight) {
-			impulse := world.Player.Body.GetMass() * 50
+			impulse := world.Player.Body.GetMass() * 2
 			world.Player.Body.ApplyLinearImpulse(box2d.MakeB2Vec2(-impulse, 0), world.Player.Body.GetWorldCenter(), true)
 		}
 
 		if rl.IsKeyDown(rl.KeyLeft) {
-			impulse := world.Player.Body.GetMass() * 50
+			impulse := world.Player.Body.GetMass() * 2
 			world.Player.Body.ApplyLinearImpulse(box2d.MakeB2Vec2(impulse, 0), world.Player.Body.GetWorldCenter(), true)
 		}
 
@@ -75,6 +76,8 @@ func main() {
 			*renderer,
 			10,
 		)
+
+		_ = camera
 
 		// remove
 		ppX, ppY := player.GetPosition()

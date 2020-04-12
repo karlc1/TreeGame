@@ -34,8 +34,8 @@ func (c *Camera) DrawActor(actor models.Actor, debug bool) {
 
 	aX, aY := actor.GetPosition()
 
-	adjustedX := aX - c.PosX + float32(c.viewportWidth/2)
-	adjustedY := aY - c.PosY + float32(c.viewportHeight/2)
+	adjustedX := aX*float32(c.unitScale) - c.PosX + float32(c.viewportWidth/2)
+	adjustedY := aY*float32(c.unitScale) - c.PosY + float32(c.viewportHeight/2)
 
 	aW, aH := actor.GetSize()
 

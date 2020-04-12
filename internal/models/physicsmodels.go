@@ -11,7 +11,7 @@ type PhysicalWorld struct {
 }
 
 func NewPhysicalWorld() *PhysicalWorld {
-	gravity := box2d.MakeB2Vec2(0, -50)
+	gravity := box2d.MakeB2Vec2(0, -10)
 
 	world := box2d.MakeB2World(gravity)
 
@@ -19,14 +19,14 @@ func NewPhysicalWorld() *PhysicalWorld {
 		PhysWorld: &world,
 	}
 
-	ground := g.NewBox(false, 0, 50, 100, 10)
-	_ = ground
+	//ground := g.NewBox(false, 0, 50, 100, 10)
+	//_ = ground
 	//ground.SetDensity(3)
 	//ground.SetFriction(3)
 
-	test := g.NewBox(true, 200, 250, 10, 20)
-	test.SetDensity(10)
-	test.SetFriction(4)
+	//test := g.NewBox(true, 200, 250, 10, 20)
+	//test.SetDensity(10)
+	//test.SetFriction(4)
 
 	return g
 }

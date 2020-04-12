@@ -33,7 +33,7 @@ func main() {
 	player.SetFriction(4)
 	world.Player = player
 
-	ground := world.NewBox(false, 0, -20, 100, 0.5)
+	ground := world.NewBox(false, 0, -25, 100, 10)
 	_ = ground
 
 	decor := make([]*models.DecorBox, 400, 400)

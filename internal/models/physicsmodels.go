@@ -60,6 +60,13 @@ func (b *Box) GetAngle() float64 {
 	return b.Body.GetAngle()
 }
 
+func (b *Box) GetZVal() int {
+	// a physics object should always
+	// be the same distance from the
+	// camera
+	return 0
+}
+
 func (w *PhysicalWorld) NewBox(dynamic bool, posX, posY, width, height float64) *Box {
 	boxDef := box2d.MakeB2BodyDef()
 

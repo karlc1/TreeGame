@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"karlc/treegame/internal/models"
 	"karlc/treegame/internal/render"
 	"karlc/treegame/internal/utils"
@@ -36,19 +35,21 @@ func main() {
 	ground := world.NewBox(false, 0, -25, 100, 10)
 	_ = ground
 
-	decor := make([]*models.DecorBox, 400, 400)
+	decor := make([]*models.DecorBox, 1000, 1000)
 	for i := range decor {
-		size := utils.RandFloat32(0, 0.4)
-		posX := utils.RandFloat32(-100, 100)
-		posY := utils.RandFloat32(-15, 30)
+		size := utils.RandFloat32(0, 0.5)
+		posX := utils.RandFloat32(-200, 200)
+		posY := utils.RandFloat32(-50, 50)
 
-		fmt.Printf("PosX: %v, PosY: %v \n", posX, posY)
+		// for parallax test
+		z := int(size * 10)
 
 		decor[i] = &models.DecorBox{
 			Height: size,
 			Width:  size,
 			PosX:   posX,
 			PosY:   posY,
+			Zval:   z,
 		}
 	}
 
@@ -94,7 +95,7 @@ func main() {
 			10,
 		)
 
-		_ = camera
+		camera.AttachTo(player)
 
 		rl.BeginDrawing()
 		rl.ClearBackground(rl.Black)

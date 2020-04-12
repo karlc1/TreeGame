@@ -25,3 +25,7 @@ func (d *DecorBox) GetSize() (float32, float32) {
 func (d *DecorBox) GetAngle() float64 {
 	return 0 // can a decorbox have an angle
 }
+
+func (d *DecorBox) GetZVal() int {
+	return d.Zval
+}

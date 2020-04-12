@@ -8,7 +8,7 @@ import (
 type Camera struct {
 	PosX           float32
 	PosY           float32
-	attachedTo     *models.Actor
+	attachedTo     models.Actor
 	viewportWidth  int
 	viewportHeight int
 
@@ -23,11 +23,18 @@ type Camera struct {
 // AttachTo lets the camera attach to an actor and
 // follow it. Probably attached to the player character
 // most of the time
-func (c *Camera) AttachTo(b *models.Actor) {
+func (c *Camera) AttachTo(b models.Actor) {
 	c.attachedTo = b
 }
 
+func (c *Camera) updateCameraPosition() {
+	aX, aY := c.attachedTo.GetPosition()
+	c.PosX, c.PosY = aX*float32(c.unitScale), aY*float32(c.unitScale)
+}
+
 func (c *Camera) DrawActor(actor models.Actor, debug bool) {
+
+	c.updateCameraPosition()
 
 	// TODO: determine if the actor is within the viewport
 	// if not, just return

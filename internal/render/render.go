@@ -7,6 +7,11 @@ import (
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
 
+func InitWindow(w, h, fps int32) {
+	rl.InitWindow(w, h, "")
+	rl.SetTargetFPS(fps)
+}
+
 type Renderer struct {
 	screenWidth  int
 	screenHeight int
@@ -71,21 +76,6 @@ func (r *Renderer) DrawBox(box *models.Box) {
 		rl.White,
 	}
 
-	//fmt.Printf("Width: %v \n Height %v \n X: %v \n Y: %v \n A: %v \n\n",
-	//width, height, pos.X, pos.Y, angle)
-
 	rl.DrawRectanglePro(rect, origin, angle, colors)
 
-	//rl.DrawRectangle(int32(pos.X), int32(pos.Y), int32(width), int32(height), rl.White)
-}
-
-func (r *Renderer) DrawWorld(world *models.PhysicalWorld) {
-	rl.BeginDrawing()
-	rl.ClearBackground(rl.Black)
-
-	for _, box := range world.Boxes {
-		r.DrawBox(box)
-	}
-
-	rl.EndDrawing()
 }

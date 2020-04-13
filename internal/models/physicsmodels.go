@@ -1,41 +1,15 @@
 package models
 
 import (
-	"karlc/treegame/internal/contact"
-	"math"
-
 	"github.com/ByteArena/box2d"
 )
 
-type PhysicalWorld struct {
-	PhysWorld *box2d.B2World
-	Boxes     []*Box //TODO: use dict with pointer keys?
-	Player    *Box
-}
+type State int
 
-func NewPhysicalWorld() *PhysicalWorld {
-	gravity := box2d.MakeB2Vec2(0, -10)
-
-	world := box2d.MakeB2World(gravity)
-
-	g := &PhysicalWorld{
-		PhysWorld: &world,
-	}
-
-	cl := contact.ContactListener{}
-	world.SetContactListener(cl)
-
-	//ground := g.NewBox(false, 0, 50, 100, 10)
-	//_ = ground
-	//ground.SetDensity(3)
-	//ground.SetFriction(3)
-
-	//test := g.NewBox(true, 200, 250, 10, 20)
-	//test.SetDensity(10)
-	//test.SetFriction(4)
-
-	return g
-}
+const (
+	GROUNDED State = iota + 1
+	JUMPING
+)
 
 type Box struct {
 	Body    *box2d.B2Body
@@ -43,6 +17,7 @@ type Box struct {
 	Fixture *box2d.B2Fixture
 	Width   float64
 	Height  float64
+	State   State
 }
 
 func (b *Box) SetDensity(d float64) {
@@ -73,33 +48,7 @@ func (b *Box) GetZVal() int {
 	return 0
 }
 
-func (b *Box) WalkRight() {
-	speed := -15.0
-	acceleration := 0.5
-	vel := b.Body.GetLinearVelocity()
-	desiredVelocity := math.Max(vel.X-acceleration, speed)
-	velChange := desiredVelocity - vel.X
-	impulse := b.Body.GetMass() * velChange
-	b.Body.ApplyLinearImpulse(box2d.MakeB2Vec2(impulse, 0), b.Body.GetWorldCenter(), true)
-}
-
-func (b *Box) WalkLeft() {
-	speed := 15.0
-	acceleration := 0.5
-	vel := b.Body.GetLinearVelocity()
-	desiredVelocity := math.Min(vel.X+acceleration, speed)
-	velChange := desiredVelocity - vel.X
-	impulse := b.Body.GetMass() * velChange
-	b.Body.ApplyLinearImpulse(box2d.MakeB2Vec2(impulse, 0), b.Body.GetWorldCenter(), true)
-}
-
-func (b *Box) Jump() {
-
-	impulse := b.Body.GetMass() * 2
-	b.Body.ApplyLinearImpulse(box2d.MakeB2Vec2(0, impulse), b.Body.GetWorldCenter(), true)
-}
-
-func (w *PhysicalWorld) NewBox(dynamic bool, posX, posY, width, height float64) *Box {
+func NewBox(world *box2d.B2World, dynamic bool, posX, posY, width, height float64) *Box {
 	boxDef := box2d.MakeB2BodyDef()
 
 	// static by default, only check if static
@@ -112,7 +61,7 @@ func (w *PhysicalWorld) NewBox(dynamic bool, posX, posY, width, height float64) 
 	boxDef.Position = box2d.MakeB2Vec2(posX, posY)
 	boxShape := box2d.MakeB2PolygonShape()
 	boxShape.SetAsBox(width, height)
-	boxBody := w.PhysWorld.CreateBody(&boxDef)
+	boxBody := world.CreateBody(&boxDef)
 	boxFixture := boxBody.CreateFixture(&boxShape, 0.0)
 
 	box := &Box{
@@ -121,8 +70,8 @@ func (w *PhysicalWorld) NewBox(dynamic bool, posX, posY, width, height float64) 
 		Fixture: boxFixture,
 		Width:   width * 2,
 		Height:  height * 2,
+		State:   JUMPING,
 	}
 
-	w.Boxes = append(w.Boxes, box)
 	return box
 }

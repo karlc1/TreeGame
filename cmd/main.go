@@ -1,11 +1,10 @@
 package main
 
 import (
-	"karlc/treegame/internal/models"
+	"karlc/treegame/internal/game"
+	"karlc/treegame/internal/physics"
 	"karlc/treegame/internal/render"
-	"karlc/treegame/internal/utils"
 
-	"github.com/ByteArena/box2d"
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
 
@@ -16,96 +15,29 @@ const (
 )
 
 func main() {
+	render.InitWindow(SCREEN_WITH, SCREEN_HEIGHT, TARGET_FPS)
 
-	rl.InitWindow(SCREEN_WITH, SCREEN_HEIGHT, "")
-	rl.SetTargetFPS(TARGET_FPS)
+	gameObj := game.NewGameObj()
+	gameObj.InitPlayer()
+	gameObj.InitGround()
+	gameObj.InitDecor(200)
 
-	world := models.NewPhysicalWorld()
-	renderer := render.NewRenderer(SCREEN_WITH, SCREEN_HEIGHT)
+	camera := render.NewCamera(
+		SCREEN_WITH,
+		SCREEN_HEIGHT,
+		10,
+	)
 
-	timeStep := 1.0 / 30
-	velocityIterations := 2
-	positionIterations := 2
+	contactListener := physics.NewContactListener(gameObj.Player)
+	gameObj.PhysWorld.SetContactListener(contactListener)
 
-	player := world.NewBox(true, -29, 10, 1, 1.5)
-	player.SetDensity(1)
-	player.SetFriction(0.6)
-	player.Fixture.SetRestitution(0.3)
-	player.Body.SetFixedRotation(true)
-	world.Player = player
-
-	ground := world.NewBox(false, 0, -45, 100, 30)
-	ground.SetFriction(0.6)
-
-	decor := make([]*models.DecorBox, 1000, 1000)
-	for i := range decor {
-		size := utils.RandFloat32(0, 0.5)
-		posX := utils.RandFloat32(-100, 100)
-		posY := utils.RandFloat32(-50, 50)
-
-		// for parallax test
-		z := int(size * 10)
-
-		decor[i] = &models.DecorBox{
-			Height: size,
-			Width:  size,
-			PosX:   posX,
-			PosY:   posY,
-			Zval:   z,
-		}
-	}
-
-	//test := world.NewBox(true, 0, 30, 4, 1)
-	//test.SetDensity(10)
-	//test.SetFriction(4)
+	camera.AttachTo(gameObj.Player)
 
 	for !rl.WindowShouldClose() {
-
-		if rl.IsKeyDown(rl.KeyUp) {
-			player.Jump()
-		}
-
-		if rl.IsKeyDown(rl.KeyDown) {
-			impulse := world.Player.Body.GetMass() * 2
-			world.Player.Body.ApplyLinearImpulse(box2d.MakeB2Vec2(0, -impulse), world.Player.Body.GetWorldCenter(), true)
-		}
-
-		if rl.IsKeyDown(rl.KeyRight) {
-			player.WalkRight()
-		}
-
-		if rl.IsKeyDown(rl.KeyLeft) {
-			player.WalkLeft()
-		}
-
-		world.PhysWorld.Step(
-			timeStep,
-			velocityIterations,
-			positionIterations,
-		)
-
-		//renderer.DrawWorld(world)
-
-		////////////////////////////////////
-		camera := render.NewCamera(
-			SCREEN_WITH,
-			SCREEN_HEIGHT,
-			*renderer,
-			10,
-		)
-
-		camera.AttachTo(player)
-
-		rl.BeginDrawing()
-		rl.ClearBackground(rl.Black)
-		camera.DrawActor(player, false)
-		camera.DrawActor(ground, false)
-		//camera.DrawActor(test, false)
-
-		for _, e := range decor {
-			camera.DrawActor(e, false)
-		}
-
-		rl.EndDrawing()
+		gameObj.UpdatePhysics()
+		game.HandleInput()
+		camera.DrawGame(gameObj)
 	}
+
+	rl.CloseWindow()
 }

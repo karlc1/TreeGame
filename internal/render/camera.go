@@ -2,7 +2,10 @@ package render
 
 import (
 	"fmt"
+	"karlc/treegame/internal/game"
 	"karlc/treegame/internal/models"
+
+	rl "github.com/gen2brain/raylib-go/raylib"
 )
 
 type Camera struct {
@@ -17,7 +20,7 @@ type Camera struct {
 	// scale is how many pixels represent 1 meter
 	unitScale int
 
-	renderer Renderer
+	renderer *Renderer
 }
 
 // AttachTo lets the camera attach to an actor and
@@ -32,7 +35,7 @@ func (c *Camera) updateCameraPosition() {
 	c.PosX, c.PosY = aX*float32(c.unitScale), aY*float32(c.unitScale)
 }
 
-func (c *Camera) DrawActor(actor models.Actor, debug bool) {
+func (c *Camera) drawActor(actor models.Actor, debug bool) {
 
 	c.updateCameraPosition()
 
@@ -58,11 +61,22 @@ func (c *Camera) DrawActor(actor models.Actor, debug bool) {
 	c.renderer.DrawRect(adjustedX, adjustedY, adjustedW, adjustedH, float32(angle))
 }
 
-func NewCamera(w, h int, renderer Renderer, scale int) *Camera {
+// DrawGame draws all actors in the game
+// TODO: should be complemented with DrawMenu() etc
+func (c *Camera) DrawGame(g *game.Game) {
+	rl.BeginDrawing()
+	rl.ClearBackground(rl.Black)
+	for _, a := range g.AllActors {
+		c.drawActor(a, false)
+	}
+	rl.EndDrawing()
+}
+
+func NewCamera(w, h int, scale int) *Camera {
 	return &Camera{
 		PosX:           0,
 		PosY:           0,
-		renderer:       renderer,
+		renderer:       NewRenderer(w, h),
 		viewportWidth:  w,
 		viewportHeight: h,
 		unitScale:      scale,

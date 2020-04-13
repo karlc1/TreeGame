@@ -33,6 +33,6 @@ func Jump(b *models.Box) {
 		return
 	}
 
-	impulse := b.Body.GetMass() * 7
+	impulse := b.Body.GetMass() * 5
 	b.Body.ApplyLinearImpulse(box2d.MakeB2Vec2(0, impulse), b.Body.GetWorldCenter(), true)
 }

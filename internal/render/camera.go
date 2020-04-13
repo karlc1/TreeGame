@@ -20,6 +20,11 @@ type Camera struct {
 	// scale is how many pixels represent 1 meter
 	unitScale int
 
+	// OffsetY denotes how much to offset the camera
+	// in relation to the attached player. The value is
+	// given in percentage of screen size
+	OffsetY float32
+
 	renderer *Renderer
 }
 
@@ -42,10 +47,11 @@ func (c *Camera) drawActor(actor models.Actor, debug bool) {
 	// TODO: determine if the actor is within the viewport
 	// if not, just return
 
-	aX, aY := actor.GetPosition()
+	adjustedOffsetY := float32(c.viewportHeight) * c.OffsetY / 100
 
+	aX, aY := actor.GetPosition()
 	adjustedX := aX*float32(c.unitScale) - c.PosX + float32(c.viewportWidth/2)
-	adjustedY := aY*float32(c.unitScale) - c.PosY + float32(c.viewportHeight/2)
+	adjustedY := aY*float32(c.unitScale) - c.PosY + adjustedOffsetY + float32(c.viewportHeight/2)
 
 	aW, aH := actor.GetSize()
 

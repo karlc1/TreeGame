@@ -20,13 +20,14 @@ func main() {
 	gameObj := game.NewGameObj()
 	gameObj.InitPlayer()
 	gameObj.InitGround()
-	gameObj.InitDecor(200)
+	gameObj.InitDecor(800)
 
 	camera := render.NewCamera(
 		SCREEN_WITH,
 		SCREEN_HEIGHT,
-		10,
+		20,
 	)
+	camera.OffsetY = -20
 
 	contactListener := physics.NewContactListener(gameObj.Player)
 	gameObj.PhysWorld.SetContactListener(contactListener)

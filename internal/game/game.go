@@ -26,7 +26,7 @@ func NewGameObj() *Game {
 }
 
 func (g *Game) InitPlayer() {
-	player := models.NewBox(g.PhysWorld, true, -29, 10, 1, 1.5)
+	player := models.NewBox(g.PhysWorld, true, -29, 10, 0.5, 0.8)
 	player.SetDensity(1)
 	player.SetFriction(0.6)
 	player.Fixture.SetRestitution(0.15)
@@ -44,9 +44,9 @@ func (g *Game) InitGround() {
 
 func (g *Game) InitDecor(n int) {
 	for i := 0; i < n; i++ {
-		size := utils.RandFloat32(0, 0.5)
+		size := utils.RandFloat32(0, 0.3)
 		posX := utils.RandFloat32(-100, 100)
-		posY := utils.RandFloat32(0, 50)
+		posY := utils.RandFloat32(-20, 50)
 
 		// for parallax test
 		z := int(size * 10)

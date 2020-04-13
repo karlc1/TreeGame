@@ -1,6 +1,9 @@
 package models
 
 import (
+	"karlc/treegame/internal/contact"
+	"math"
+
 	"github.com/ByteArena/box2d"
 )
 
@@ -18,6 +21,9 @@ func NewPhysicalWorld() *PhysicalWorld {
 	g := &PhysicalWorld{
 		PhysWorld: &world,
 	}
+
+	cl := contact.ContactListener{}
+	world.SetContactListener(cl)
 
 	//ground := g.NewBox(false, 0, 50, 100, 10)
 	//_ = ground
@@ -65,6 +71,32 @@ func (b *Box) GetZVal() int {
 	// be the same distance from the
 	// camera
 	return 0
+}
+
+func (b *Box) WalkRight() {
+	speed := -15.0
+	acceleration := 0.5
+	vel := b.Body.GetLinearVelocity()
+	desiredVelocity := math.Max(vel.X-acceleration, speed)
+	velChange := desiredVelocity - vel.X
+	impulse := b.Body.GetMass() * velChange
+	b.Body.ApplyLinearImpulse(box2d.MakeB2Vec2(impulse, 0), b.Body.GetWorldCenter(), true)
+}
+
+func (b *Box) WalkLeft() {
+	speed := 15.0
+	acceleration := 0.5
+	vel := b.Body.GetLinearVelocity()
+	desiredVelocity := math.Min(vel.X+acceleration, speed)
+	velChange := desiredVelocity - vel.X
+	impulse := b.Body.GetMass() * velChange
+	b.Body.ApplyLinearImpulse(box2d.MakeB2Vec2(impulse, 0), b.Body.GetWorldCenter(), true)
+}
+
+func (b *Box) Jump() {
+
+	impulse := b.Body.GetMass() * 2
+	b.Body.ApplyLinearImpulse(box2d.MakeB2Vec2(0, impulse), b.Body.GetWorldCenter(), true)
 }
 
 func (w *PhysicalWorld) NewBox(dynamic bool, posX, posY, width, height float64) *Box {

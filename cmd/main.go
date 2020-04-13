@@ -23,22 +23,24 @@ func main() {
 	world := models.NewPhysicalWorld()
 	renderer := render.NewRenderer(SCREEN_WITH, SCREEN_HEIGHT)
 
-	timeStep := 1.0 / TARGET_FPS
+	timeStep := 1.0 / 30
 	velocityIterations := 2
 	positionIterations := 2
 
 	player := world.NewBox(true, -29, 10, 1, 1.5)
-	player.SetDensity(10)
-	player.SetFriction(4)
+	player.SetDensity(1)
+	player.SetFriction(0.6)
+	player.Fixture.SetRestitution(0.3)
+	player.Body.SetFixedRotation(true)
 	world.Player = player
 
-	ground := world.NewBox(false, 0, -25, 100, 10)
-	_ = ground
+	ground := world.NewBox(false, 0, -45, 100, 30)
+	ground.SetFriction(0.6)
 
 	decor := make([]*models.DecorBox, 1000, 1000)
 	for i := range decor {
 		size := utils.RandFloat32(0, 0.5)
-		posX := utils.RandFloat32(-200, 200)
+		posX := utils.RandFloat32(-100, 100)
 		posY := utils.RandFloat32(-50, 50)
 
 		// for parallax test
@@ -60,8 +62,7 @@ func main() {
 	for !rl.WindowShouldClose() {
 
 		if rl.IsKeyDown(rl.KeyUp) {
-			impulse := world.Player.Body.GetMass() * 2
-			world.Player.Body.ApplyLinearImpulse(box2d.MakeB2Vec2(0, impulse), world.Player.Body.GetWorldCenter(), true)
+			player.Jump()
 		}
 
 		if rl.IsKeyDown(rl.KeyDown) {
@@ -70,13 +71,11 @@ func main() {
 		}
 
 		if rl.IsKeyDown(rl.KeyRight) {
-			impulse := world.Player.Body.GetMass() * 2
-			world.Player.Body.ApplyLinearImpulse(box2d.MakeB2Vec2(-impulse, 0), world.Player.Body.GetWorldCenter(), true)
+			player.WalkRight()
 		}
 
 		if rl.IsKeyDown(rl.KeyLeft) {
-			impulse := world.Player.Body.GetMass() * 2
-			world.Player.Body.ApplyLinearImpulse(box2d.MakeB2Vec2(impulse, 0), world.Player.Body.GetWorldCenter(), true)
+			player.WalkLeft()
 		}
 
 		world.PhysWorld.Step(

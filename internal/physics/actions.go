@@ -30,7 +30,7 @@ func WalkLeft(b *models.Box) {
 
 func Jump(b *models.Box) {
 	if b.State == models.JUMPING {
-		return
+		//return
 	}
 
 	impulse := b.Body.GetMass() * 5

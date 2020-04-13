@@ -67,6 +67,28 @@ func (c *Camera) drawActor(actor models.Actor, debug bool) {
 	c.renderer.DrawRect(adjustedX, adjustedY, adjustedW, adjustedH, float32(angle))
 }
 
+func (c *Camera) drawJoint(joint *models.Joint) {
+
+	cA := joint.B2Joint.GetBodyA().GetLocalCenter()
+	cB := joint.B2Joint.GetBodyB().GetLocalCenter()
+
+	adjustedOffsetY := float32(c.viewportHeight) * c.OffsetY / 100
+
+	adjustedAX := float32(cA.X)*float32(c.unitScale) - c.PosX + float32(c.viewportWidth/2)
+	adjustedAY := float32(cA.Y)*float32(c.unitScale) - c.PosY + adjustedOffsetY + float32(c.viewportHeight/2)
+
+	adjustedBX := float32(cB.X)*float32(c.unitScale) - c.PosX + float32(c.viewportWidth/2)
+	adjustedBY := float32(cB.Y)*float32(c.unitScale) - c.PosY + adjustedOffsetY + float32(c.viewportHeight/2)
+
+	rl.DrawLine(
+		int32(c.renderer.screenWidth)-int32(adjustedAX),
+		int32(c.renderer.screenHeight)-int32(adjustedAY),
+		int32(c.renderer.screenWidth)-int32(adjustedBX),
+		int32(c.renderer.screenHeight)-int32(adjustedBY),
+		rl.White,
+	)
+}
+
 // DrawGame draws all actors in the game
 // TODO: should be complemented with DrawMenu() etc
 func (c *Camera) DrawGame(g *game.Game) {
@@ -75,6 +97,11 @@ func (c *Camera) DrawGame(g *game.Game) {
 	for _, a := range g.AllActors {
 		c.drawActor(a, false)
 	}
+
+	for _, j := range g.AllJoints {
+		c.drawJoint(j)
+	}
+
 	rl.EndDrawing()
 }
 

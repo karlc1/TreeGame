@@ -12,6 +12,7 @@ var game *Game
 type Game struct {
 	PhysWorld *box2d.B2World
 	AllActors []models.Actor
+	AllJoints []*models.Joint
 	Player    *models.Box
 }
 
@@ -40,6 +41,14 @@ func (g *Game) InitGround() {
 	ground := models.NewBox(g.PhysWorld, false, 0, -45, 100, 30)
 	ground.SetFriction(0.6)
 	g.AllActors = append(g.AllActors, ground)
+}
+
+func (g *Game) InitTestBox() {
+	testBox := models.NewBox(g.PhysWorld, false, -20, 10, 1, 1)
+	g.AllActors = append(g.AllActors, testBox)
+
+	rope := models.NewJoint(g.PhysWorld, g.Player, testBox)
+	g.AllJoints = append(g.AllJoints, rope)
 }
 
 func (g *Game) InitDecor(n int) {

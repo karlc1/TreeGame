@@ -20,7 +20,8 @@ func main() {
 	gameObj := game.NewGameObj()
 	gameObj.InitPlayer()
 	gameObj.InitGround()
-	gameObj.InitDecor(800)
+	gameObj.InitDecor(500)
+	gameObj.InitTestBox()
 
 	camera := render.NewCamera(
 		SCREEN_WITH,

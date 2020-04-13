@@ -75,3 +75,24 @@ func NewBox(world *box2d.B2World, dynamic bool, posX, posY, width, height float6
 
 	return box
 }
+
+type Joint struct {
+	B2Joint box2d.B2JointInterface
+}
+
+func NewJoint(world *box2d.B2World, A, B *Box) *Joint {
+	jointDef := box2d.MakeB2RopeJointDef()
+	jointDef.BodyA = A.Body
+	jointDef.BodyB = B.Body
+	jointDef.CollideConnected = true
+
+	jointDef.MaxLength = 5
+
+	j := world.CreateJoint(&jointDef)
+
+	joint := &Joint{
+		B2Joint: j,
+	}
+
+	return joint
+}

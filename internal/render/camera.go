@@ -7,6 +7,7 @@ import (
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
 
+// Camera
 type Camera struct {
 	PosX           float32
 	PosY           float32
@@ -73,24 +74,14 @@ func (c *Camera) TranslateSize(w, h float32) (adjustedW, adjustedH float32) {
 
 func (c *Camera) drawJoint(joint *models.Joint) {
 
-	cA := joint.B2Joint.GetBodyA().GetLocalCenter()
-	cB := joint.B2Joint.GetBodyB().GetLocalCenter()
+	cA := joint.B2Joint.GetBodyA().GetPosition()
+	cB := joint.B2Joint.GetBodyB().GetPosition()
 
-	adjustedOffsetY := float32(c.viewportHeight) * c.OffsetY / 100
+	ax, ay := c.TranslatePosition(float32(cA.X), float32(cA.Y))
+	bx, by := c.TranslatePosition(float32(cB.X), float32(cB.Y))
 
-	adjustedAX := float32(cA.X)*float32(c.unitScale) - c.PosX + float32(c.viewportWidth/2)
-	adjustedAY := float32(cA.Y)*float32(c.unitScale) - c.PosY + adjustedOffsetY + float32(c.viewportHeight/2)
+	c.renderer.DrawLine(ax, ay, bx, by, 5)
 
-	adjustedBX := float32(cB.X)*float32(c.unitScale) - c.PosX + float32(c.viewportWidth/2)
-	adjustedBY := float32(cB.Y)*float32(c.unitScale) - c.PosY + adjustedOffsetY + float32(c.viewportHeight/2)
-
-	rl.DrawLine(
-		int32(c.renderer.screenWidth)-int32(adjustedAX),
-		int32(c.renderer.screenHeight)-int32(adjustedAY),
-		int32(c.renderer.screenWidth)-int32(adjustedBX),
-		int32(c.renderer.screenHeight)-int32(adjustedBY),
-		rl.White,
-	)
 }
 
 // DrawGame draws all actors in the game

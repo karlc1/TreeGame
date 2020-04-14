@@ -86,7 +86,7 @@ func NewJoint(world *box2d.B2World, A, B *Box) *Joint {
 	jointDef.BodyB = B.Body
 	jointDef.CollideConnected = true
 
-	jointDef.MaxLength = 5
+	jointDef.MaxLength = 15
 
 	j := world.CreateJoint(&jointDef)
 

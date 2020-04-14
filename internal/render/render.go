@@ -51,6 +51,12 @@ func (r *Renderer) DrawRect(x, y, w, h, a float32) {
 	rl.DrawRectanglePro(rect, origin, angle, colors)
 }
 
+func (r *Renderer) DrawLine(aX, aY, bX, bY, thickness float32) {
+	v1 := rl.NewVector2(float32(r.screenWidth)-aX, float32(r.screenHeight)-aY)
+	v2 := rl.NewVector2(float32(r.screenWidth)-bX, float32(r.screenHeight)-bY)
+	rl.DrawLineEx(v1, v2, 1.0, rl.White)
+}
+
 func (r *Renderer) DrawBox(box *models.Box) {
 	posX, posY := box.GetPosition()
 

@@ -31,7 +31,7 @@ func (g *Game) InitPlayer() {
 	player.SetDensity(1)
 	player.SetFriction(0.6)
 	player.Fixture.SetRestitution(0.15)
-	player.Body.SetFixedRotation(true)
+	player.Body.SetFixedRotation(false)
 	player.Fixture.SetUserData(player)
 	g.AllActors = append(g.AllActors, player)
 	g.Player = player

@@ -1,7 +1,6 @@
 package render
 
 import (
-	"fmt"
 	"karlc/treegame/internal/game"
 	"karlc/treegame/internal/models"
 
@@ -20,10 +19,11 @@ type Camera struct {
 	// scale is how many pixels represent 1 meter
 	unitScale int
 
-	// OffsetY denotes how much to offset the camera
-	// in relation to the attached player. The value is
+	// Offset denotes how much to offset the camera
+	// in relation to the attached actor. The value is
 	// given in percentage of screen size
 	OffsetY float32
+	OffsetX float32
 
 	renderer *Renderer
 }
@@ -40,31 +40,35 @@ func (c *Camera) updateCameraPosition() {
 	c.PosX, c.PosY = aX*float32(c.unitScale), aY*float32(c.unitScale)
 }
 
-func (c *Camera) drawActor(actor models.Actor, debug bool) {
+func (c *Camera) drawActor(actor models.Actor) {
 
 	c.updateCameraPosition()
 
 	// TODO: determine if the actor is within the viewport
 	// if not, just return
 
-	adjustedOffsetY := float32(c.viewportHeight) * c.OffsetY / 100
-
-	aX, aY := actor.GetPosition()
-	adjustedX := aX*float32(c.unitScale) - c.PosX + float32(c.viewportWidth/2)
-	adjustedY := aY*float32(c.unitScale) - c.PosY + adjustedOffsetY + float32(c.viewportHeight/2)
-
-	aW, aH := actor.GetSize()
-
-	adjustedW := (aW * float32(c.unitScale)) // TODO: make less ugly
-	adjustedH := (aH * float32(c.unitScale)) // TODO: make less ugly
+	adjustedX, adjustedY := c.TranslatePosition(actor.GetPosition())
+	adjustedW, adjustedH := c.TranslateSize(actor.GetSize())
 
 	angle := actor.GetAngle()
 
-	if debug {
-		fmt.Printf("W: %v \n H: %v \n X: %v \n Y: %v \n \n", adjustedW, adjustedH, adjustedX, adjustedY)
-	}
-
 	c.renderer.DrawRect(adjustedX, adjustedY, adjustedW, adjustedH, float32(angle))
+}
+
+// TranslatePosition takes a coordinate from the physics simulation and translates it to a
+// point in the cameras viewport using the given camera position, viewport size and unitScale/zoom
+func (c *Camera) TranslatePosition(x, y float32) (adjustedX, adjustedY float32) {
+	adjustedOffsetY := float32(c.viewportHeight) * c.OffsetY / 100
+	adjustedOffsetX := float32(c.viewportHeight) * c.OffsetX / 100
+	adjustedX = x*float32(c.unitScale) - c.PosX + adjustedOffsetX + float32(c.viewportWidth/2)
+	adjustedY = y*float32(c.unitScale) - c.PosY + adjustedOffsetY + float32(c.viewportHeight/2)
+	return
+}
+
+func (c *Camera) TranslateSize(w, h float32) (adjustedW, adjustedH float32) {
+	adjustedW = (w * float32(c.unitScale))
+	adjustedH = (h * float32(c.unitScale))
+	return
 }
 
 func (c *Camera) drawJoint(joint *models.Joint) {
@@ -95,7 +99,7 @@ func (c *Camera) DrawGame(g *game.Game) {
 	rl.BeginDrawing()
 	rl.ClearBackground(rl.Black)
 	for _, a := range g.AllActors {
-		c.drawActor(a, false)
+		c.drawActor(a)
 	}
 
 	for _, j := range g.AllJoints {

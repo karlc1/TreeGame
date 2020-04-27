@@ -4,13 +4,15 @@ import (
 	"karlc/treegame/internal/game"
 	"karlc/treegame/internal/models"
 
-	rl "github.com/gen2brain/raylib-go/raylib"
+	"github.com/faiface/pixel/pixelgl"
+	//"karlc/treegame/internal/models"
+	//rl "github.com/gen2brain/raylib-go/raylib"
 )
 
 // Camera
 type Camera struct {
-	PosX           float32
-	PosY           float32
+	PosX           float64
+	PosY           float64
 	attachedTo     models.Actor
 	viewportWidth  int
 	viewportHeight int
@@ -23,8 +25,8 @@ type Camera struct {
 	// Offset denotes how much to offset the camera
 	// in relation to the attached actor. The value is
 	// given in percentage of screen size
-	OffsetY float32
-	OffsetX float32
+	OffsetY float64
+	OffsetX float64
 
 	renderer *Renderer
 }
@@ -38,7 +40,7 @@ func (c *Camera) AttachTo(b models.Actor) {
 
 func (c *Camera) updateCameraPosition() {
 	aX, aY := c.attachedTo.GetPosition()
-	c.PosX, c.PosY = aX*float32(c.unitScale), aY*float32(c.unitScale)
+	c.PosX, c.PosY = aX*float64(c.unitScale), aY*float64(c.unitScale)
 }
 
 func (c *Camera) drawActor(actor models.Actor) {
@@ -53,60 +55,63 @@ func (c *Camera) drawActor(actor models.Actor) {
 
 	angle := actor.GetAngle()
 
-	c.renderer.DrawRect(adjustedX, adjustedY, adjustedW, adjustedH, float32(angle))
+	c.renderer.DrawRect(adjustedX, adjustedY, adjustedW, adjustedH, float64(angle))
 }
 
 // TranslatePosition takes a coordinate from the physics simulation and translates it to a
 // point in the cameras viewport using the given camera position, viewport size and unitScale/zoom
-func (c *Camera) TranslatePosition(x, y float32) (adjustedX, adjustedY float32) {
-	adjustedOffsetY := float32(c.viewportHeight) * c.OffsetY / 100
-	adjustedOffsetX := float32(c.viewportHeight) * c.OffsetX / 100
-	adjustedX = x*float32(c.unitScale) - c.PosX + adjustedOffsetX + float32(c.viewportWidth/2)
-	adjustedY = y*float32(c.unitScale) - c.PosY + adjustedOffsetY + float32(c.viewportHeight/2)
+func (c *Camera) TranslatePosition(x, y float64) (adjustedX, adjustedY float64) {
+	adjustedOffsetY := float64(c.viewportHeight) * c.OffsetY / 100
+	adjustedOffsetX := float64(c.viewportHeight) * c.OffsetX / 100
+	adjustedX = x*float64(c.unitScale) - float64(c.PosX) + adjustedOffsetX + float64(c.viewportWidth/2)
+	adjustedY = y*float64(c.unitScale) - float64(c.PosY) + adjustedOffsetY + float64(c.viewportHeight/2)
 	return
 }
 
-func (c *Camera) TranslateSize(w, h float32) (adjustedW, adjustedH float32) {
-	adjustedW = (w * float32(c.unitScale))
-	adjustedH = (h * float32(c.unitScale))
+func (c *Camera) TranslateSize(w, h float64) (adjustedW, adjustedH float64) {
+	adjustedW = (w * float64(c.unitScale))
+	adjustedH = (h * float64(c.unitScale))
 	return
 }
 
-func (c *Camera) drawJoint(joint *models.Joint) {
+//func (c *Camera) drawJoint(joint *models.Joint) {
 
-	cA := joint.B2Joint.GetBodyA().GetPosition()
-	cB := joint.B2Joint.GetBodyB().GetPosition()
+//cA := joint.B2Joint.GetBodyA().GetPosition()
+//cB := joint.B2Joint.GetBodyB().GetPosition()
 
-	ax, ay := c.TranslatePosition(float32(cA.X), float32(cA.Y))
-	bx, by := c.TranslatePosition(float32(cB.X), float32(cB.Y))
+//ax, ay := c.TranslatePosition(float32(cA.X), float32(cA.Y))
+//bx, by := c.TranslatePosition(float32(cB.X), float32(cB.Y))
 
-	c.renderer.DrawLine(ax, ay, bx, by, 5)
-
-}
+//c.renderer.DrawLine(ax, ay, bx, by, 5)
+//}
 
 // DrawGame draws all actors in the game
 // TODO: should be complemented with DrawMenu() etc
 func (c *Camera) DrawGame(g *game.Game) {
-	rl.BeginDrawing()
-	rl.ClearBackground(rl.Black)
+	//rl.BeginDrawing()
+	//rl.ClearBackground(rl.Black)
 	for _, a := range g.AllActors {
 		c.drawActor(a)
 	}
 
-	for _, j := range g.AllJoints {
-		c.drawJoint(j)
-	}
+	//for _, j := range g.AllJoints {
+	//c.drawJoint(j)
+	//}
 
-	rl.EndDrawing()
+	//rl.EndDrawing()
 }
 
-func NewCamera(w, h int, scale int) *Camera {
+func NewCamera(w, h, scale int, win *pixelgl.Window) *Camera {
 	return &Camera{
 		PosX:           0,
 		PosY:           0,
-		renderer:       NewRenderer(w, h),
 		viewportWidth:  w,
 		viewportHeight: h,
 		unitScale:      scale,
+		renderer:       NewRenderer(win),
 	}
+}
+
+func (c *Camera) TestDraw() {
+	c.renderer.Test()
 }

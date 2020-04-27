@@ -1,8 +1,8 @@
 package models
 
 type Actor interface {
-	GetPosition() (float32, float32)
-	GetSize() (float32, float32)
+	GetPosition() (float64, float64)
+	GetSize() (float64, float64)
 	GetAngle() float64
 	GetZVal() int
 }

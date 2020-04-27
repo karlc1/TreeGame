@@ -29,12 +29,12 @@ func (b *Box) SetFriction(f float64) {
 	b.Fixture.SetFriction(f)
 }
 
-func (b *Box) GetPosition() (float32, float32) {
-	return float32(b.Body.M_xf.P.X), float32(b.Body.M_xf.P.Y)
+func (b *Box) GetPosition() (float64, float64) {
+	return b.Body.M_xf.P.X, b.Body.M_xf.P.Y
 }
 
-func (b *Box) GetSize() (float32, float32) {
-	return float32(b.Width), float32(b.Height)
+func (b *Box) GetSize() (float64, float64) {
+	return b.Width, b.Height
 }
 
 func (b *Box) GetAngle() float64 {

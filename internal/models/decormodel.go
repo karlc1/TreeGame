@@ -3,10 +3,10 @@ package models
 // DecorBox is a drawable box that is not interactable
 // Completely decoupled from physics
 type DecorBox struct {
-	PosX   float32
-	PosY   float32
-	Width  float32
-	Height float32
+	PosX   float64
+	PosY   float64
+	Width  float64
+	Height float64
 	// should eventually determine which objects
 	// are in front of which. High Zval is further
 	// away from the camera
@@ -14,11 +14,11 @@ type DecorBox struct {
 	Zval int
 }
 
-func (d *DecorBox) GetPosition() (float32, float32) {
+func (d *DecorBox) GetPosition() (float64, float64) {
 	return d.PosX, d.PosY
 }
 
-func (d *DecorBox) GetSize() (float32, float32) {
+func (d *DecorBox) GetSize() (float64, float64) {
 	return d.Width, d.Height
 }
 

@@ -53,9 +53,9 @@ func (g *Game) InitTestBox() {
 
 func (g *Game) InitDecor(n int) {
 	for i := 0; i < n; i++ {
-		size := utils.RandFloat32(0, 0.3)
-		posX := utils.RandFloat32(-100, 100)
-		posY := utils.RandFloat32(-20, 50)
+		size := utils.RandFloat64(0, 0.3)
+		posX := utils.RandFloat64(-100, 100)
+		posY := utils.RandFloat64(-20, 50)
 
 		// for parallax test
 		z := int(size * 10)

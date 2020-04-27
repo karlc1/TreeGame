@@ -3,20 +3,34 @@ package game
 import (
 	"karlc/treegame/internal/physics"
 
-	rl "github.com/gen2brain/raylib-go/raylib"
+	"github.com/faiface/pixel/pixelgl"
 )
 
-func HandleInput() {
+type InputHandler struct {
+	win *pixelgl.Window
+}
 
-	if rl.IsKeyDown(rl.KeyUp) {
+func NewInputHandler(win *pixelgl.Window) *InputHandler {
+	return &InputHandler{
+		win: win,
+	}
+}
+
+func (i *InputHandler) HandleInput() {
+
+	if i.win.Pressed(pixelgl.KeyUp) {
 		physics.Jump(game.Player)
 	}
 
-	if rl.IsKeyDown(rl.KeyRight) {
+	if i.win.Pressed(pixelgl.KeyRight) {
 		physics.WalkRight(game.Player)
 	}
 
-	if rl.IsKeyDown(rl.KeyLeft) {
+	if i.win.Pressed(pixelgl.KeyLeft) {
 		physics.WalkLeft(game.Player)
+	}
+
+	if i.win.Pressed(pixelgl.KeyEscape) {
+		i.win.SetClosed(true)
 	}
 }

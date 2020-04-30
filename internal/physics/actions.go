@@ -14,7 +14,7 @@ const (
 
 func WalkRight(b *models.Box) {
 	vel := b.Body.GetLinearVelocity()
-	desiredVelocity := math.Max(vel.X-walking_acc, -walking_speed)
+	desiredVelocity := math.Max(vel.X+walking_acc, -walking_speed)
 	velChange := desiredVelocity - vel.X
 	impulse := b.Body.GetMass() * velChange
 	b.Body.ApplyLinearImpulse(box2d.MakeB2Vec2(impulse, 0), b.Body.GetWorldCenter(), true)
@@ -22,7 +22,7 @@ func WalkRight(b *models.Box) {
 
 func WalkLeft(b *models.Box) {
 	vel := b.Body.GetLinearVelocity()
-	desiredVelocity := math.Min(vel.X+walking_acc, walking_speed)
+	desiredVelocity := math.Min(vel.X-walking_acc, walking_speed)
 	velChange := desiredVelocity - vel.X
 	impulse := b.Body.GetMass() * velChange
 	b.Body.ApplyLinearImpulse(box2d.MakeB2Vec2(impulse, 0), b.Body.GetWorldCenter(), true)

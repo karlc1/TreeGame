@@ -24,8 +24,10 @@ func RandFloat64(min, max float64) float64 {
 	return float64(i) / 1000.0
 }
 
-func RotateRectCorner(centerX, centerY, cornerX, cornerY, angle float64) (Rx, Ry float64) {
-	Rx = centerX + (cornerX * math.Cos(angle)) - (cornerY * math.Sin(angle))
-	Ry = centerY + (cornerX * math.Sin(angle)) + (cornerY * math.Cos(angle))
-	return
+// rotate rotates a corner around a center point theta radians
+func RotatePoint(centerX, centerY, pointX, pointY, theta float64) (float64, float64) {
+	tempX, tempY := pointX-centerX, pointY-centerY
+	rotatedX := tempX*math.Cos(theta) - tempY*math.Sin(theta)
+	rotatedY := tempX*math.Sin(theta) + tempY*math.Cos(theta)
+	return rotatedX + centerX, rotatedY + centerY
 }

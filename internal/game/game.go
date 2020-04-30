@@ -14,6 +14,8 @@ type Game struct {
 	AllActors []models.Actor
 	AllJoints []*models.Joint
 	Player    *models.Box
+	TestBox   *models.Box
+	Rope      *models.Joint
 }
 
 func NewGameObj() *Game {
@@ -46,9 +48,16 @@ func (g *Game) InitGround() {
 func (g *Game) InitTestBox() {
 	testBox := models.NewBox(g.PhysWorld, false, -20, 0, 1, 1)
 	g.AllActors = append(g.AllActors, testBox)
+	g.TestBox = testBox
 
 	//rope := models.NewJoint(g.PhysWorld, g.Player, testBox)
 	//g.AllJoints = append(g.AllJoints, rope)
+}
+
+func (g *Game) InitRope() {
+	r := models.NewRope(g.PhysWorld, g.Player, g.TestBox)
+	g.AllJoints = append(g.AllJoints, r)
+	g.Rope = r
 }
 
 func (g *Game) InitDecor(n int) {

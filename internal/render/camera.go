@@ -3,6 +3,7 @@ package render
 import (
 	"karlc/treegame/internal/game"
 	"karlc/treegame/internal/models"
+	"karlc/treegame/internal/utils"
 
 	"github.com/faiface/pixel/pixelgl"
 	//"karlc/treegame/internal/models"
@@ -91,9 +92,24 @@ func (c *Camera) TranslateSize(w, h float64) (adjustedW, adjustedH float64) {
 func (c *Camera) drawJoint(joint *models.Joint) {
 	cA := joint.B2Joint.GetBodyA().GetPosition()
 	cB := joint.B2Joint.GetBodyB().GetPosition()
-	ax, ay := c.TranslatePosition(cA.X, cA.Y)
-	bx, by := c.TranslatePosition(cB.X, cB.Y)
-	c.renderer.DrawLine(ax, ay, bx, by)
+
+	aax := cA.X + joint.AnchorAX
+	aay := cA.Y + joint.AnchorAY
+	abx := cB.X + joint.AnchorBX
+	aby := cB.Y + joint.AnchorBY
+
+	tcax, tcay := c.TranslatePosition(cA.X, cA.Y)
+	tcbx, tcby := c.TranslatePosition(cB.X, cB.Y)
+	tax, tay := c.TranslatePosition(aax, aay)
+	tbx, tby := c.TranslatePosition(abx, aby)
+
+	ra := joint.B2Joint.GetBodyA().GetAngle()
+	rb := joint.B2Joint.GetBodyB().GetAngle()
+
+	rax, ray := utils.RotatePoint(tcax, tcay, tax, tay, ra)
+	rbx, rby := utils.RotatePoint(tcbx, tcby, tbx, tby, rb)
+
+	c.renderer.DrawLine(rax, ray, rbx, rby)
 }
 
 // DrawGame draws all actors in the game

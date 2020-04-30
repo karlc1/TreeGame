@@ -1,6 +1,8 @@
 package models
 
 import (
+	"fmt"
+
 	"github.com/ByteArena/box2d"
 )
 
@@ -77,7 +79,11 @@ func NewBox(world *box2d.B2World, dynamic bool, posX, posY, width, height float6
 }
 
 type Joint struct {
-	B2Joint box2d.B2JointInterface
+	B2Joint  box2d.B2JointInterface
+	AnchorAX float64
+	AnchorAY float64
+	AnchorBX float64
+	AnchorBY float64
 }
 
 func NewJoint(world *box2d.B2World, A, B *Box) *Joint {
@@ -95,4 +101,32 @@ func NewJoint(world *box2d.B2World, A, B *Box) *Joint {
 	}
 
 	return joint
+}
+
+func NewRope(world *box2d.B2World, player, box *Box) *Joint {
+	jointDef := box2d.MakeB2RopeJointDef()
+	jointDef.SetBodyA(player.Body)
+	jointDef.SetBodyB(box.Body)
+
+	jointDef.MaxLength = 8
+	jointDef.CollideConnected = true
+
+	jointDef.LocalAnchorA = box2d.MakeB2Vec2(0, 1)
+	jointDef.LocalAnchorB = box2d.MakeB2Vec2(0, -1)
+
+	fmt.Printf("ANCHOR PLAYER X: %v \n", jointDef.LocalAnchorA.X)
+	fmt.Printf("ANCHOR PLAYER Y: %v \n", jointDef.LocalAnchorA.Y)
+
+	fmt.Printf("ANCHOR BOX X: %v \n", jointDef.LocalAnchorB.X)
+	fmt.Printf("ANCHOR BOX Y: %v \n", jointDef.LocalAnchorB.Y)
+
+	j := world.CreateJoint(&jointDef)
+
+	return &Joint{
+		B2Joint:  j,
+		AnchorAX: jointDef.LocalAnchorA.X,
+		AnchorAY: jointDef.LocalAnchorA.Y,
+		AnchorBX: jointDef.LocalAnchorB.X,
+		AnchorBY: jointDef.LocalAnchorB.Y,
+	}
 }

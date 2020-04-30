@@ -75,6 +75,7 @@ func setupGame() *game.Game {
 	gameObj.InitGround()
 	gameObj.InitDecor(500)
 	gameObj.InitTestBox()
+	gameObj.InitRope()
 	contactListener := physics.NewContactListener(gameObj.Player)
 	gameObj.PhysWorld.SetContactListener(contactListener)
 	return gameObj

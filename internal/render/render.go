@@ -1,7 +1,9 @@
 package render
 
 import (
+	"fmt"
 	"karlc/treegame/internal/models"
+	"math"
 
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
@@ -49,7 +51,7 @@ func (r *Renderer) DrawRect(x, y, w, h, a float64) {
 	imd.Push(pixel.V(bottomLeftX, bottomLeftY))
 	imd.Color = pixel.RGB(0, 1, 1)
 	imd.Push(pixel.V(topLeftX, topLeftY))
-	imd.Polygon(0)
+	imd.Polygon(1)
 	imd.Draw(r.window)
 
 	//rect := rl.Rectangle{
@@ -114,19 +116,52 @@ func (r *Renderer) DrawBox(box *models.Box) {
 }
 
 func (r *Renderer) Test() {
+	cx, cy, w, h, a := 400.0, 400.0, 100.0, 100.0, 0.0
+
+	r.DrawRect(cx, cy, w, h, a)
+
+	a = 0.785
+
+	topLeftX := cx - w/2
+	topLeftY := cy + h/2
+	rTopLeftX, rTopLeftY := rotate(cx, cy, topLeftX, topLeftY, a)
+
+	fmt.Printf("tlx: %v, rtlx: %v \n", topLeftX, rTopLeftX)
+
+	topRightX := cx + w/2
+	topRightY := cy + h/2
+	rTopRightX, rTopRightY := rotate(cx, cy, topRightX, topRightY, a)
+
+	bottomLeftX := cx - w/2
+	bottomLeftY := cy - h/2
+	rBottomLeftX, rBottomLeftY := rotate(cx, cy, bottomLeftX, bottomLeftY, a)
+
+	bottomRightX := cx + w/2
+	bottomRightY := cy - h/2
+	rBottomRightX, rBottomRightY := rotate(cx, cy, bottomRightX, bottomRightY, a)
+
 	imd := imdraw.New(nil)
 	imd.EndShape = imdraw.RoundEndShape
 	imd.Color = pixel.RGB(1, 0, 0)
-	imd.Push(pixel.V(100, 100))
+	imd.Push(pixel.V(rTopLeftX, rTopLeftY))
 	imd.Color = pixel.RGB(0, 1, 0)
-	imd.Push(pixel.V(100, 200))
+	imd.Push(pixel.V(rTopRightX, rTopRightY))
 	imd.Color = pixel.RGB(0, 0, 1)
-	imd.Push(pixel.V(200, 200))
+	imd.Push(pixel.V(rBottomRightX, rBottomRightY))
 	imd.Color = pixel.RGB(0, 1, 0)
-	imd.Push(pixel.V(200, 100))
-
+	imd.Push(pixel.V(rBottomLeftX, rBottomLeftY))
 	imd.Color = pixel.RGB(0, 1, 1)
-	imd.Push(pixel.V(100, 100))
-	imd.Polygon(0)
+	imd.Push(pixel.V(rTopLeftX, rTopLeftY))
+	imd.Polygon(1)
 	imd.Draw(r.window)
+}
+
+func rotate(centerX, centerY, cornerX, cornerY, theta float64) (float64, float64) {
+	tempX := cornerX - centerX
+	tempY := cornerY - centerY
+
+	rotatedX := tempX*math.Cos(theta) - tempY*math.Sin(theta)
+	rotatedY := tempX*math.Sin(theta) + tempY*math.Cos(theta)
+
+	return rotatedX + centerX, rotatedY + centerY
 }

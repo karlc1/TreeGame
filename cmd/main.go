@@ -62,7 +62,7 @@ func run() {
 		game.UpdatePhysics()
 
 		win.Clear(colornames.Black)
-		//camera.TestDraw()
+		camera.TestDraw()
 		camera.DrawGame(game)
 		win.Update()
 

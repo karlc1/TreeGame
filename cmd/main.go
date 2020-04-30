@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"karlc/treegame/internal/game"
 	"karlc/treegame/internal/physics"
 	"karlc/treegame/internal/render"
@@ -19,34 +20,6 @@ const (
 
 func main() {
 	pixelgl.Run(run)
-
-	//render.InitWindow(SCREEN_WITH, SCREEN_HEIGHT, TARGET_FPS)
-
-	//gameObj := game.NewGameObj()
-	//gameObj.InitPlayer()
-	//gameObj.InitGround()
-	//gameObj.InitDecor(500)
-	//gameObj.InitTestBox()
-
-	//camera := render.NewCamera(
-	//SCREEN_WITH,
-	//SCREEN_HEIGHT,
-	//20,
-	//)
-	//camera.OffsetY = -20
-
-	//contactListener := physics.NewContactListener(gameObj.Player)
-	//gameObj.PhysWorld.SetContactListener(contactListener)
-
-	//camera.AttachTo(gameObj.Player)
-
-	//for !rl.WindowShouldClose() {
-	//gameObj.UpdatePhysics()
-	//game.HandleInput()
-	//camera.DrawGame(gameObj)
-	//}
-
-	//rl.CloseWindow()
 }
 
 func run() {
@@ -55,9 +28,20 @@ func run() {
 	game := setupGame()
 	camera := setupCamera(game, win)
 
-	fps := time.Tick(time.Second / 60)
+	fpsTick := time.Tick(time.Second / TARGET_FPS)
+	secondTick := time.Tick(time.Second)
+	frames := 0
 
 	for !win.Closed() {
+
+		select {
+		case <-secondTick:
+			fmt.Println(frames)
+			frames = 0
+		default:
+			frames++
+		}
+
 		inputHandler.HandleInput()
 		game.UpdatePhysics()
 
@@ -66,7 +50,7 @@ func run() {
 		camera.DrawGame(game)
 		win.Update()
 
-		<-fps
+		<-fpsTick
 	}
 
 }
@@ -75,7 +59,7 @@ func setupWindow() *pixelgl.Window {
 	cfg := pixelgl.WindowConfig{
 		Title:  "Pixel Rocks!",
 		Bounds: pixel.R(0, 0, SCREEN_WITH, SCREEN_HEIGHT),
-		//VSync:  true,
+		VSync:  true,
 	}
 
 	win, err := pixelgl.NewWindow(cfg)

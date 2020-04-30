@@ -44,11 +44,11 @@ func (g *Game) InitGround() {
 }
 
 func (g *Game) InitTestBox() {
-	testBox := models.NewBox(g.PhysWorld, false, -20, 10, 1, 1)
+	testBox := models.NewBox(g.PhysWorld, false, -20, 0, 1, 1)
 	g.AllActors = append(g.AllActors, testBox)
 
-	rope := models.NewJoint(g.PhysWorld, g.Player, testBox)
-	g.AllJoints = append(g.AllJoints, rope)
+	//rope := models.NewJoint(g.PhysWorld, g.Player, testBox)
+	//g.AllJoints = append(g.AllJoints, rope)
 }
 
 func (g *Game) InitDecor(n int) {

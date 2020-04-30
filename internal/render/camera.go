@@ -43,15 +43,29 @@ func (c *Camera) updateCameraPosition() {
 	c.PosX, c.PosY = aX*float64(c.unitScale), aY*float64(c.unitScale)
 }
 
+// isWithinView determines if an actor is visible on screen
+// the arguments should have been translated according to
+// camera position and unit size before calling this
+func (c *Camera) isWithinView(x, y, w, h float64) bool {
+	return x > 0-w/2 &&
+		x < float64(c.viewportWidth)+w/2 &&
+		y > 0-h/2 &&
+		y < float64(c.viewportHeight)+w/2
+}
+
+var drawnActors = 1
+
 func (c *Camera) drawActor(actor models.Actor) {
-
-	c.updateCameraPosition()
-
-	// TODO: determine if the actor is within the viewport
-	// if not, just return
 
 	adjustedX, adjustedY := c.TranslatePosition(actor.GetPosition())
 	adjustedW, adjustedH := c.TranslateSize(actor.GetSize())
+
+	//TODO: does not account for rotation, problem later?
+	if !c.isWithinView(adjustedX, adjustedY, adjustedW, adjustedH) {
+		return
+	}
+
+	drawnActors++
 
 	angle := actor.GetAngle()
 
@@ -85,8 +99,11 @@ func (c *Camera) drawJoint(joint *models.Joint) {
 // DrawGame draws all actors in the game
 // TODO: should be complemented with DrawMenu() etc
 func (c *Camera) DrawGame(g *game.Game) {
-	//rl.BeginDrawing()
-	//rl.ClearBackground(rl.Black)
+	//fmt.Printf("DrawnActors: %d \n", drawnActors)
+	drawnActors = 0
+
+	c.updateCameraPosition()
+
 	for _, a := range g.AllActors {
 		c.drawActor(a)
 	}
@@ -94,8 +111,6 @@ func (c *Camera) DrawGame(g *game.Game) {
 	for _, j := range g.AllJoints {
 		c.drawJoint(j)
 	}
-
-	//rl.EndDrawing()
 }
 
 func NewCamera(w, h, scale int, win *pixelgl.Window) *Camera {

@@ -27,9 +27,7 @@ func NewRenderer(window *pixelgl.Window) *Renderer {
 func (r *Renderer) DrawLine(aX, aY, bX, bY float64) {
 	imd := imdraw.New(nil)
 	imd.EndShape = imdraw.RoundEndShape
-	imd.Color = pixel.RGB(1, 0, 0)
 	imd.Push(pixel.V(aX, aY))
-	imd.Color = pixel.RGB(0, 1, 0)
 	imd.Push(pixel.V(bX, bY))
 	imd.Line(1)
 	imd.Draw(r.window)
@@ -51,17 +49,12 @@ func (r *Renderer) DrawRect(x, y, w, h, a float64) {
 
 	imd := imdraw.New(nil)
 	imd.EndShape = imdraw.RoundEndShape
-	imd.Color = pixel.RGB(1, 0, 0)
 	imd.Push(pixel.V(tlx, tly))
-	imd.Color = pixel.RGB(0, 1, 0)
 	imd.Push(pixel.V(trx, try))
-	imd.Color = pixel.RGB(0, 0, 1)
 	imd.Push(pixel.V(brx, bry))
-	imd.Color = pixel.RGB(0, 1, 0)
 	imd.Push(pixel.V(blx, bly))
-	imd.Color = pixel.RGB(0, 1, 1)
 	imd.Push(pixel.V(tlx, tly))
-	imd.Polygon(1)
+	imd.Polygon(0)
 	imd.Draw(r.window)
 }
 

@@ -89,8 +89,8 @@ func setupGame() *game.Game {
 	gameObj := game.NewGameObj()
 	gameObj.InitPlayer()
 	gameObj.InitGround()
-	//gameObj.InitDecor(500)
-	//gameObj.InitTestBox()
+	gameObj.InitDecor(500)
+	gameObj.InitTestBox()
 	contactListener := physics.NewContactListener(gameObj.Player)
 	gameObj.PhysWorld.SetContactListener(contactListener)
 	return gameObj

@@ -74,16 +74,13 @@ func (c *Camera) TranslateSize(w, h float64) (adjustedW, adjustedH float64) {
 	return
 }
 
-//func (c *Camera) drawJoint(joint *models.Joint) {
-
-//cA := joint.B2Joint.GetBodyA().GetPosition()
-//cB := joint.B2Joint.GetBodyB().GetPosition()
-
-//ax, ay := c.TranslatePosition(float32(cA.X), float32(cA.Y))
-//bx, by := c.TranslatePosition(float32(cB.X), float32(cB.Y))
-
-//c.renderer.DrawLine(ax, ay, bx, by, 5)
-//}
+func (c *Camera) drawJoint(joint *models.Joint) {
+	cA := joint.B2Joint.GetBodyA().GetPosition()
+	cB := joint.B2Joint.GetBodyB().GetPosition()
+	ax, ay := c.TranslatePosition(cA.X, cA.Y)
+	bx, by := c.TranslatePosition(cB.X, cB.Y)
+	c.renderer.DrawLine(ax, ay, bx, by)
+}
 
 // DrawGame draws all actors in the game
 // TODO: should be complemented with DrawMenu() etc
@@ -94,9 +91,9 @@ func (c *Camera) DrawGame(g *game.Game) {
 		c.drawActor(a)
 	}
 
-	//for _, j := range g.AllJoints {
-	//c.drawJoint(j)
-	//}
+	for _, j := range g.AllJoints {
+		c.drawJoint(j)
+	}
 
 	//rl.EndDrawing()
 }
@@ -112,6 +109,7 @@ func NewCamera(w, h, scale int, win *pixelgl.Window) *Camera {
 	}
 }
 
+// remove later, used to experiment with pixelgl easily
 func (c *Camera) TestDraw() {
 	c.renderer.Test()
 }

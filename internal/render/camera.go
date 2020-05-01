@@ -124,9 +124,13 @@ func (c *Camera) DrawGame(g *game.Game) {
 		c.drawActor(a)
 	}
 
-	for _, j := range g.AllJoints {
-		c.drawJoint(j)
+	if g.Rope != nil {
+		c.drawJoint(g.Rope)
 	}
+
+	//for _, j := range g.AllJoints {
+	//c.drawJoint(j)
+	//}
 }
 
 func NewCamera(w, h, scale int, win *pixelgl.Window) *Camera {

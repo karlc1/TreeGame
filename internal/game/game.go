@@ -25,6 +25,7 @@ func NewGameObj() *Game {
 		PhysWorld: &world,
 	}
 	game = g
+
 	return g
 }
 

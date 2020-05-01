@@ -50,7 +50,17 @@ func run() {
 		camera.DrawGame(game)
 		win.Update()
 
-		<-fpsTick
+		//<-fpsTick
+		_ = fpsTick
+
+		if inputHandler.DestroyRope && !game.PhysWorld.IsLocked() && game.Rope != nil {
+			game.PhysWorld.DestroyJoint(game.Rope.B2Joint)
+			game.Rope = nil
+		}
+
+		if inputHandler.NewRope && game.Rope == nil {
+			game.InitRope()
+		}
 	}
 
 }
@@ -73,11 +83,12 @@ func setupGame() *game.Game {
 	gameObj := game.NewGameObj()
 	gameObj.InitPlayer()
 	gameObj.InitGround()
-	gameObj.InitDecor(500)
+	gameObj.InitDecor(200)
 	gameObj.InitTestBox()
 	gameObj.InitRope()
 	contactListener := physics.NewContactListener(gameObj.Player)
 	gameObj.PhysWorld.SetContactListener(contactListener)
+
 	return gameObj
 }
 

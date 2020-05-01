@@ -54,7 +54,7 @@ func (r *Renderer) DrawRect(x, y, w, h, a float64) {
 	imd.Push(pixel.V(brx, bry))
 	imd.Push(pixel.V(blx, bly))
 	imd.Push(pixel.V(tlx, tly))
-	imd.Line(1)
+	imd.Polygon(0)
 	imd.Draw(r.window)
 }
 

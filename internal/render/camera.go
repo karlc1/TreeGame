@@ -1,7 +1,6 @@
 package render
 
 import (
-	"fmt"
 	"karlc/treegame/internal/game"
 	"karlc/treegame/internal/models"
 	"karlc/treegame/internal/utils"
@@ -66,7 +65,6 @@ func (c *Camera) updateZoom() {
 		tot += e
 	}
 	c.zoom = math.Max(tot/400, 2)
-	fmt.Println(c.zoom)
 	c.zoomIndex++
 }
 
@@ -154,6 +152,10 @@ func (c *Camera) DrawGame(g *game.Game) {
 		c.drawJoint(g.Rope)
 	}
 
+	if g.Tree != nil {
+		c.DrawTree(g.Tree)
+	}
+
 	//for _, j := range g.AllJoints {
 	//c.drawJoint(j)
 	//}
@@ -183,4 +185,21 @@ func NewCamera(w, h int, scale float64, win *pixelgl.Window) *Camera {
 // remove later, used to experiment with pixelgl easily
 func (c *Camera) TestDraw() {
 	c.renderer.Test()
+}
+
+func (c *Camera) DrawTree(tree *models.Tree) {
+
+	blx, bly := tree.PosX-tree.Width/2, tree.Base
+	brx, bry := tree.PosX+tree.Width/2, tree.Base
+	tlx, tly := tree.PosX-tree.Width/2, tree.Base+tree.Height
+	trx, try := tree.PosX+tree.Width/2, tree.Base+tree.Height
+
+	tblx, tbly := c.TranslatePosition(blx, bly)
+	tbrx, tbry := c.TranslatePosition(brx, bry)
+	ttlx, ttly := c.TranslatePosition(tlx, tly)
+	ttrx, ttry := c.TranslatePosition(trx, try)
+
+	c.renderer.DrawLine(tblx, tbly, ttlx, ttly)
+	c.renderer.DrawLine(tbrx, tbry, ttrx, ttry)
+	c.renderer.DrawLine(ttlx, ttly, ttrx, ttry)
 }

@@ -17,6 +17,7 @@ type Game struct {
 	Player    *models.Box
 	TestBox   *models.Box
 	Rope      *models.Joint
+	Tree      *models.Tree
 }
 
 func NewGameObj() *Game {
@@ -39,6 +40,16 @@ func (g *Game) InitPlayer() {
 	player.Fixture.SetUserData(player)
 	g.AllActors = append(g.AllActors, player)
 	g.Player = player
+}
+
+func (g *Game) InitTree() {
+	t := models.NewTree(
+		46,
+		100,
+		45,
+		-15,
+	)
+	g.Tree = t
 }
 
 func (g *Game) InitGround() {

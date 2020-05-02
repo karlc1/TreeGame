@@ -91,6 +91,7 @@ func setupGame() *game.Game {
 	gameObj.InitDecor(200)
 	gameObj.InitTestBox()
 	gameObj.InitRope()
+	gameObj.InitTree()
 	contactListener := physics.NewContactListener(gameObj.Player)
 	gameObj.PhysWorld.SetContactListener(contactListener)
 

@@ -3,6 +3,7 @@ package game
 import (
 	"karlc/treegame/internal/models"
 	"karlc/treegame/internal/utils"
+	"time"
 
 	"github.com/ByteArena/box2d"
 )
@@ -57,7 +58,6 @@ func (g *Game) InitTestBox() {
 
 func (g *Game) InitRope() {
 	r := models.NewRope(g.PhysWorld, g.Player, g.TestBox)
-	g.AllJoints = append(g.AllJoints, r)
 	g.Rope = r
 }
 
@@ -81,10 +81,13 @@ func (g *Game) InitDecor(n int) {
 }
 
 // UpdatePhysics steps the physics simulation forward
-func (g *Game) UpdatePhysics() {
-	timeStep := 1.0 / 30
-	velocityIterations := 2
-	positionIterations := 2
+func (g *Game) UpdatePhysics(elapsed time.Duration) {
+
+	//timeStep := 1.0 / 60
+	timeStep := elapsed.Seconds() * 2
+
+	velocityIterations := 1
+	positionIterations := 1
 	g.PhysWorld.Step(
 		timeStep,
 		velocityIterations,

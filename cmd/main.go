@@ -15,7 +15,7 @@ import (
 const (
 	SCREEN_WITH   = 1200
 	SCREEN_HEIGHT = 600
-	TARGET_FPS    = 60
+	TARGET_FPS    = 144
 )
 
 func main() {
@@ -31,27 +31,32 @@ func run() {
 	fpsTick := time.Tick(time.Second / TARGET_FPS)
 	secondTick := time.Tick(time.Second)
 	frames := 0
+	lastFrame := time.Now()
+	var elapsedTime time.Duration
 
 	for !win.Closed() {
 
+		elapsedTime = time.Since(lastFrame)
+		lastFrame = time.Now()
+
 		select {
 		case <-secondTick:
-			fmt.Println(frames)
+			fmt.Printf("FPS: %v \n", frames)
 			frames = 0
+			fmt.Printf("Timestep: %v \n", elapsedTime.Seconds())
 		default:
 			frames++
 		}
 
 		inputHandler.HandleInput()
-		game.UpdatePhysics()
+		game.UpdatePhysics(elapsedTime)
 
 		win.Clear(colornames.Black)
 		camera.TestDraw()
 		camera.DrawGame(game)
 		win.Update()
 
-		//<-fpsTick
-		_ = fpsTick
+		<-fpsTick
 
 		if inputHandler.DestroyRope && !game.PhysWorld.IsLocked() && game.Rope != nil {
 			game.PhysWorld.DestroyJoint(game.Rope.B2Joint)
@@ -69,7 +74,7 @@ func setupWindow() *pixelgl.Window {
 	cfg := pixelgl.WindowConfig{
 		Title:  "Pixel Rocks!",
 		Bounds: pixel.R(0, 0, SCREEN_WITH, SCREEN_HEIGHT),
-		VSync:  true,
+		VSync:  false,
 	}
 
 	win, err := pixelgl.NewWindow(cfg)

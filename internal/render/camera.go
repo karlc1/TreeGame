@@ -1,9 +1,11 @@
 package render
 
 import (
+	"fmt"
 	"karlc/treegame/internal/game"
 	"karlc/treegame/internal/models"
 	"karlc/treegame/internal/utils"
+	"math"
 
 	"github.com/faiface/pixel/pixelgl"
 	//"karlc/treegame/internal/models"
@@ -14,14 +16,18 @@ import (
 type Camera struct {
 	PosX           float64
 	PosY           float64
-	attachedTo     models.Actor
+	attachedTo     models.PhysicsActor
 	viewportWidth  int
 	viewportHeight int
 
 	// unit scale is similar to a zoom level
 	// 1.0 size unit is 1 meter in the physical world,
 	// scale is how many pixels represent 1 meter
-	unitScale int
+	unitScale float64
+
+	zoom      float64
+	zoomList  []float64 // used to average out zoom values for smoother zoom
+	zoomIndex int       // used for zoomList
 
 	// Offset denotes how much to offset the camera
 	// in relation to the attached actor. The value is
@@ -35,13 +41,33 @@ type Camera struct {
 // AttachTo lets the camera attach to an actor and
 // follow it. Probably attached to the player character
 // most of the time
-func (c *Camera) AttachTo(b models.Actor) {
+func (c *Camera) AttachTo(b models.PhysicsActor) {
 	c.attachedTo = b
 }
 
 func (c *Camera) updateCameraPosition() {
+
 	aX, aY := c.attachedTo.GetPosition()
-	c.PosX, c.PosY = aX*float64(c.unitScale), aY*float64(c.unitScale)
+	c.PosX, c.PosY = aX*c.zoom, aY*c.zoom
+
+	c.updateZoom()
+}
+
+func (c *Camera) updateZoom() {
+	if c.zoomIndex == 399 {
+		c.zoomIndex = 0
+	}
+	velX, velY := c.attachedTo.GetLinearVelocity()
+	adjustedVel := math.Pow(math.Abs(velX)+math.Abs(velY), 0.6)
+	cZoom := c.unitScale - adjustedVel
+	c.zoomList[c.zoomIndex] = cZoom
+	tot := 0.0
+	for _, e := range c.zoomList {
+		tot += e
+	}
+	c.zoom = math.Max(tot/400, 2)
+	fmt.Println(c.zoom)
+	c.zoomIndex++
 }
 
 // isWithinView determines if an actor is visible on screen
@@ -78,14 +104,14 @@ func (c *Camera) drawActor(actor models.Actor) {
 func (c *Camera) TranslatePosition(x, y float64) (adjustedX, adjustedY float64) {
 	adjustedOffsetY := float64(c.viewportHeight) * c.OffsetY / 100
 	adjustedOffsetX := float64(c.viewportHeight) * c.OffsetX / 100
-	adjustedX = x*float64(c.unitScale) - float64(c.PosX) + adjustedOffsetX + float64(c.viewportWidth/2)
-	adjustedY = y*float64(c.unitScale) - float64(c.PosY) + adjustedOffsetY + float64(c.viewportHeight/2)
+	adjustedX = x*c.zoom - float64(c.PosX) + adjustedOffsetX + float64(c.viewportWidth/2)
+	adjustedY = y*c.zoom - float64(c.PosY) + adjustedOffsetY + float64(c.viewportHeight/2)
 	return
 }
 
 func (c *Camera) TranslateSize(w, h float64) (adjustedW, adjustedH float64) {
-	adjustedW = (w * float64(c.unitScale))
-	adjustedH = (h * float64(c.unitScale))
+	adjustedW = (w * c.zoom)
+	adjustedH = (h * c.zoom)
 	return
 }
 
@@ -133,7 +159,15 @@ func (c *Camera) DrawGame(g *game.Game) {
 	//}
 }
 
-func NewCamera(w, h, scale int, win *pixelgl.Window) *Camera {
+func NewCamera(w, h int, scale float64, win *pixelgl.Window) *Camera {
+
+	// TODO: adjust number of avg vals
+	avgVals := 400
+	zoomList := make([]float64, avgVals, avgVals)
+	for i := 0; i < avgVals; i++ {
+		zoomList[i] = scale
+	}
+
 	return &Camera{
 		PosX:           0,
 		PosY:           0,
@@ -141,6 +175,8 @@ func NewCamera(w, h, scale int, win *pixelgl.Window) *Camera {
 		viewportHeight: h,
 		unitScale:      scale,
 		renderer:       NewRenderer(win),
+		zoomList:       zoomList,
+		zoom:           scale,
 	}
 }
 

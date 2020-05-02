@@ -6,3 +6,8 @@ type Actor interface {
 	GetAngle() float64
 	GetZVal() int
 }
+
+type PhysicsActor interface {
+	Actor
+	GetLinearVelocity() (float64, float64)
+}

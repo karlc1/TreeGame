@@ -20,7 +20,7 @@ type Game struct {
 }
 
 func NewGameObj() *Game {
-	gravity := box2d.MakeB2Vec2(0, -10)
+	gravity := box2d.MakeB2Vec2(0, -40)
 	world := box2d.MakeB2World(gravity)
 	g := &Game{
 		PhysWorld: &world,
@@ -32,7 +32,7 @@ func NewGameObj() *Game {
 
 func (g *Game) InitPlayer() {
 	player := models.NewBox(g.PhysWorld, true, -29, 10, 0.5, 0.8)
-	player.SetDensity(1)
+	player.SetDensity(100)
 	player.SetFriction(0.6)
 	player.Fixture.SetRestitution(0.15)
 	player.Body.SetFixedRotation(false)
@@ -84,7 +84,7 @@ func (g *Game) InitDecor(n int) {
 func (g *Game) UpdatePhysics(elapsed time.Duration) {
 
 	//timeStep := 1.0 / 60
-	timeStep := elapsed.Seconds() * 2
+	timeStep := elapsed.Seconds()
 
 	velocityIterations := 1
 	positionIterations := 1

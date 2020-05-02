@@ -35,6 +35,10 @@ func (b *Box) GetPosition() (float64, float64) {
 	return b.Body.M_xf.P.X, b.Body.M_xf.P.Y
 }
 
+func (b *Box) GetLinearVelocity() (float64, float64) {
+	return b.Body.GetLinearVelocity().X, b.Body.GetLinearVelocity().Y
+}
+
 func (b *Box) GetSize() (float64, float64) {
 	return b.Width, b.Height
 }

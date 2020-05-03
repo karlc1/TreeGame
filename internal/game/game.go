@@ -14,16 +14,23 @@ type Game struct {
 	PhysWorld *box2d.B2World
 	AllActors []models.Actor
 	AllJoints []*models.Joint
-	Player    *models.Box
+	Player    *models.Player
 	TestBox   *models.Box
 	Rope      *models.Joint
+	Ground    *models.Box
+	GravityX  float64
+	GravityY  float64
 }
 
 func NewGameObj() *Game {
-	gravity := box2d.MakeB2Vec2(0, -40)
+	gravityX := 0.0
+	gravityY := -20.0
+	gravity := box2d.MakeB2Vec2(gravityX, gravityY)
 	world := box2d.MakeB2World(gravity)
 	g := &Game{
 		PhysWorld: &world,
+		GravityX:  gravityX,
+		GravityY:  gravityY,
 	}
 	game = g
 
@@ -31,20 +38,23 @@ func NewGameObj() *Game {
 }
 
 func (g *Game) InitPlayer() {
-	player := models.NewBox(g.PhysWorld, true, -29, 10, 0.5, 0.8)
-	player.SetDensity(100)
-	player.SetFriction(0.6)
-	player.Fixture.SetRestitution(0.15)
-	player.Body.SetFixedRotation(false)
-	player.Fixture.SetUserData(player)
-	g.AllActors = append(g.AllActors, player)
-	g.Player = player
+	playerBox := models.NewBox(g.PhysWorld, true, -29, 10, 0.5, 0.8)
+	playerBox.SetDensity(100)
+	playerBox.SetFriction(0.6)
+	playerBox.Fixture.SetRestitution(0.15)
+	playerBox.Body.SetFixedRotation(false)
+	playerBox.Fixture.SetUserData(playerBox)
+	g.AllActors = append(g.AllActors, playerBox)
+	g.Player = &models.Player{
+		Box: playerBox,
+	}
 }
 
 func (g *Game) InitGround() {
 	ground := models.NewBox(g.PhysWorld, false, 0, -45, 100, 30)
 	ground.SetFriction(0.6)
 	g.AllActors = append(g.AllActors, ground)
+	g.Ground = ground
 }
 
 func (g *Game) InitTestBox() {
@@ -57,7 +67,7 @@ func (g *Game) InitTestBox() {
 }
 
 func (g *Game) InitRope() {
-	r := models.NewRope(g.PhysWorld, g.Player, g.TestBox)
+	r := models.NewRope(g.PhysWorld, g.Player.Box, g.TestBox)
 	g.Rope = r
 }
 

@@ -1,7 +1,6 @@
 package render
 
 import (
-	"fmt"
 	"karlc/treegame/internal/game"
 	"karlc/treegame/internal/models"
 	"karlc/treegame/internal/utils"
@@ -66,7 +65,6 @@ func (c *Camera) updateZoom() {
 		tot += e
 	}
 	c.zoom = math.Max(tot/400, 2)
-	fmt.Println(c.zoom)
 	c.zoomIndex++
 }
 

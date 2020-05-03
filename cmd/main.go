@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"karlc/treegame/internal/game"
 	"karlc/treegame/internal/physics"
 	"karlc/treegame/internal/render"
@@ -15,7 +14,7 @@ import (
 const (
 	SCREEN_WITH   = 1200
 	SCREEN_HEIGHT = 600
-	TARGET_FPS    = 144
+	TARGET_FPS    = 60
 )
 
 func main() {
@@ -41,9 +40,9 @@ func run() {
 
 		select {
 		case <-secondTick:
-			fmt.Printf("FPS: %v \n", frames)
+			//fmt.Printf("FPS: %v \n", frames)
 			frames = 0
-			fmt.Printf("Timestep: %v \n", elapsedTime.Seconds())
+			//fmt.Printf("Timestep: %v \n", elapsedTime.Seconds())
 		default:
 			frames++
 		}
@@ -55,6 +54,8 @@ func run() {
 		camera.TestDraw()
 		camera.DrawGame(game)
 		win.Update()
+
+		physics.AdjustAngularVelocity(game.Player, game.Ground, game.GravityY)
 
 		<-fpsTick
 
@@ -91,7 +92,7 @@ func setupGame() *game.Game {
 	gameObj.InitDecor(200)
 	gameObj.InitTestBox()
 	gameObj.InitRope()
-	contactListener := physics.NewContactListener(gameObj.Player)
+	contactListener := physics.NewContactListener(gameObj.Player.Box)
 	gameObj.PhysWorld.SetContactListener(contactListener)
 
 	return gameObj
@@ -105,6 +106,6 @@ func setupCamera(game *game.Game, win *pixelgl.Window) *render.Camera {
 		win,
 	)
 	camera.OffsetY = -20
-	camera.AttachTo(game.Player)
+	camera.AttachTo(game.Player.Box)
 	return camera
 }

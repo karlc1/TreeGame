@@ -1,6 +1,7 @@
 package render
 
 import (
+	"karlc/treegame/internal/config"
 	"karlc/treegame/internal/game"
 	"karlc/treegame/internal/models"
 	"karlc/treegame/internal/utils"
@@ -157,7 +158,7 @@ func (c *Camera) DrawGame(g *game.Game) {
 	//}
 }
 
-func NewCamera(w, h int, scale float64, win *pixelgl.Window) *Camera {
+func NewCamera(cfg *config.Config, scale float64, win *pixelgl.Window) *Camera {
 
 	// TODO: adjust number of avg vals
 	avgVals := 400
@@ -169,8 +170,8 @@ func NewCamera(w, h int, scale float64, win *pixelgl.Window) *Camera {
 	return &Camera{
 		PosX:           0,
 		PosY:           0,
-		viewportWidth:  w,
-		viewportHeight: h,
+		viewportWidth:  int(cfg.ScreenWidth),
+		viewportHeight: int(cfg.ScreenHeight),
 		unitScale:      scale,
 		renderer:       NewRenderer(win),
 		zoomList:       zoomList,

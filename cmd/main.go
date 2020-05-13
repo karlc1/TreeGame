@@ -1,6 +1,7 @@
 package main
 
 import (
+	"karlc/treegame/internal/config"
 	"karlc/treegame/internal/game"
 	"karlc/treegame/internal/physics"
 	"karlc/treegame/internal/render"
@@ -11,32 +12,23 @@ import (
 	"golang.org/x/image/colornames"
 )
 
-const (
-	SCREEN_WITH   = 1200
-	SCREEN_HEIGHT = 600
-	TARGET_FPS    = 60
-)
-
 func main() {
 	pixelgl.Run(run)
 }
 
 func run() {
-	win := setupWindow()
+	config := config.Default()
+	win := setupWindow(config)
 	inputHandler := game.NewInputHandler(win)
-	game := setupGame()
-	camera := setupCamera(game, win)
+	game := setupGame(config)
+	defer game.ExitGame()
+	camera := setupCamera(config, game, win)
 
-	fpsTick := time.Tick(time.Second / TARGET_FPS)
+	fpsTick := time.Tick(time.Second / time.Duration(config.TargetFPS))
 	secondTick := time.Tick(time.Second)
 	frames := 0
-	lastFrame := time.Now()
-	var elapsedTime time.Duration
 
 	for !win.Closed() {
-
-		elapsedTime = time.Since(lastFrame)
-		lastFrame = time.Now()
 
 		select {
 		case <-secondTick:
@@ -48,9 +40,9 @@ func run() {
 		}
 
 		inputHandler.HandleInput()
-		game.UpdatePhysics(elapsedTime)
+		game.UpdatePhysics()
 
-		win.Clear(colornames.Black)
+		win.Clear(colornames.Darkslategray)
 		camera.TestDraw()
 		camera.DrawGame(game)
 		win.Update()
@@ -71,37 +63,35 @@ func run() {
 
 }
 
-func setupWindow() *pixelgl.Window {
-	cfg := pixelgl.WindowConfig{
+func setupWindow(cfg *config.Config) *pixelgl.Window {
+	winCfg := pixelgl.WindowConfig{
 		Title:  "Pixel Rocks!",
-		Bounds: pixel.R(0, 0, SCREEN_WITH, SCREEN_HEIGHT),
+		Bounds: pixel.R(0, 0, cfg.ScreenWidth, cfg.ScreenHeight),
 		VSync:  false,
 	}
 
-	win, err := pixelgl.NewWindow(cfg)
+	win, err := pixelgl.NewWindow(winCfg)
 	if err != nil {
 		panic(err)
 	}
 	return win
 }
 
-func setupGame() *game.Game {
-	gameObj := game.NewGameObj()
+func setupGame(config *config.Config) *game.Game {
+	gameObj := game.NewGameObj(config)
 	gameObj.InitPlayer()
 	gameObj.InitGround()
-	gameObj.InitDecor(200)
+	gameObj.InitDecor(350)
 	gameObj.InitTestBox()
 	gameObj.InitRope()
-	contactListener := physics.NewContactListener(gameObj.Player.Box)
-	gameObj.PhysWorld.SetContactListener(contactListener)
+	gameObj.InitContactListener()
 
 	return gameObj
 }
 
-func setupCamera(game *game.Game, win *pixelgl.Window) *render.Camera {
+func setupCamera(cfg *config.Config, game *game.Game, win *pixelgl.Window) *render.Camera {
 	camera := render.NewCamera(
-		SCREEN_WITH,
-		SCREEN_HEIGHT,
+		cfg,
 		20,
 		win,
 	)

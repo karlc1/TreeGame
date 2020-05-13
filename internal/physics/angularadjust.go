@@ -13,7 +13,7 @@ var lastVel float64
 // https://www.youtube.com/watch?v=BZwizmCI_g0
 func AdjustAngularVelocity(player *models.Player, ground *models.Box, gravY float64) {
 
-	//pVelY := player.Box.Body.GetLinearVelocity().Y
+	pVelY := player.Box.Body.GetLinearVelocity().Y
 	//defer func() {
 	//lastVel = pVelY
 	//}()
@@ -23,12 +23,11 @@ func AdjustAngularVelocity(player *models.Player, ground *models.Box, gravY floa
 	//}
 
 	//only adjust if player is falling downwards
-	//if pVelY > 0 {
-	//fmt.Println("--------")
-	//return
-	//}
+	if pVelY > 0 {
+		return
+	}
 
-	t := getTimeUntilGrounded(player, ground, gravY)
+	t := getTimestepsUntilGrounded(player, ground, gravY)
 
 	//go func() {
 	//timer := time.NewTimer(time.Millisecond * time.Duration(t*1000))
@@ -39,11 +38,14 @@ func AdjustAngularVelocity(player *models.Player, ground *models.Box, gravY floa
 	fullCircle := math.Pi * 2
 
 	// TODO: something with negative/positive velocity and angle
+	if player.Box.GetAngle() < 0 {
+		fullCircle = -fullCircle
+	}
 
 	// do the rotation modulo a full rotation in radians
-	currentAngle := math.Mod(math.Abs(player.Box.GetAngle()), fullCircle)
+	currentAngle := math.Mod(player.Box.GetAngle(), fullCircle)
 
-	angularVel := math.Abs(player.Box.Body.GetAngularVelocity())
+	angularVel := player.Box.Body.GetAngularVelocity()
 
 	// predicted landing angle
 	pred := math.Mod(currentAngle+angularVel*t, fullCircle)
@@ -56,7 +58,7 @@ func AdjustAngularVelocity(player *models.Player, ground *models.Box, gravY floa
 
 }
 
-func getTimeUntilGrounded(player *models.Player, ground *models.Box, gravY float64) float64 {
+func getTimestepsUntilGrounded(player *models.Player, ground *models.Box, gravY float64) float64 {
 	// player coordinates
 	_, ph := player.Box.GetSize()
 	_, py := player.Box.GetPosition()

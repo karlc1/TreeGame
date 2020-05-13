@@ -1,9 +1,9 @@
 package game
 
 import (
+	"karlc/treegame/internal/config"
 	"karlc/treegame/internal/models"
 	"karlc/treegame/internal/utils"
-	"time"
 
 	"github.com/ByteArena/box2d"
 )
@@ -11,6 +11,7 @@ import (
 var game *Game
 
 type Game struct {
+	Config    *config.Config
 	PhysWorld *box2d.B2World
 	AllActors []models.Actor
 	AllJoints []*models.Joint
@@ -22,12 +23,13 @@ type Game struct {
 	GravityY  float64
 }
 
-func NewGameObj() *Game {
+func NewGameObj(config *config.Config) *Game {
 	gravityX := 0.0
 	gravityY := -20.0
 	gravity := box2d.MakeB2Vec2(gravityX, gravityY)
 	world := box2d.MakeB2World(gravity)
 	g := &Game{
+		Config:    config,
 		PhysWorld: &world,
 		GravityX:  gravityX,
 		GravityY:  gravityY,
@@ -37,6 +39,10 @@ func NewGameObj() *Game {
 	return g
 }
 
+func (g *Game) ExitGame() {
+	g.PhysWorld.Destroy()
+}
+
 func (g *Game) InitPlayer() {
 	playerBox := models.NewBox(g.PhysWorld, true, -29, 10, 0.5, 0.8)
 	playerBox.SetDensity(100)
@@ -44,6 +50,9 @@ func (g *Game) InitPlayer() {
 	playerBox.Fixture.SetRestitution(0.15)
 	playerBox.Body.SetFixedRotation(false)
 	playerBox.Fixture.SetUserData(playerBox)
+
+	//playerBox.Body.SetAngularDamping(0.5)
+
 	g.AllActors = append(g.AllActors, playerBox)
 	g.Player = &models.Player{
 		Box: playerBox,
@@ -59,6 +68,7 @@ func (g *Game) InitGround() {
 
 func (g *Game) InitTestBox() {
 	testBox := models.NewBox(g.PhysWorld, false, -20, 0, 1, 1)
+
 	g.AllActors = append(g.AllActors, testBox)
 	g.TestBox = testBox
 
@@ -90,11 +100,15 @@ func (g *Game) InitDecor(n int) {
 	}
 }
 
-// UpdatePhysics steps the physics simulation forward
-func (g *Game) UpdatePhysics(elapsed time.Duration) {
+func (g *Game) InitContactListener() {
+	contactListener := NewContactListener(g.Player.Box)
+	g.PhysWorld.SetContactListener(contactListener)
+}
 
-	//timeStep := 1.0 / 60
-	timeStep := elapsed.Seconds()
+// UpdatePhysics steps the physics simulation forward
+func (g *Game) UpdatePhysics() {
+
+	timeStep := 1.0 / float64(g.Config.TargetFPS)
 
 	velocityIterations := 1
 	positionIterations := 1

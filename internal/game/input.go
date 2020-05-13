@@ -1,8 +1,6 @@
 package game
 
 import (
-	"karlc/treegame/internal/physics"
-
 	"github.com/faiface/pixel/pixelgl"
 )
 
@@ -21,15 +19,15 @@ func NewInputHandler(win *pixelgl.Window) *InputHandler {
 func (i *InputHandler) HandleInput() {
 
 	if i.win.Pressed(pixelgl.KeyUp) {
-		physics.Jump(game.Player.Box)
+		Jump(game.Player.Box)
 	}
 
 	if i.win.Pressed(pixelgl.KeyRight) {
-		physics.WalkRight(game.Player.Box)
+		WalkRight(game.Player.Box)
 	}
 
 	if i.win.Pressed(pixelgl.KeyLeft) {
-		physics.WalkLeft(game.Player.Box)
+		WalkLeft(game.Player.Box)
 	}
 
 	if i.win.Pressed(pixelgl.KeyEscape) {

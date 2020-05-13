@@ -31,3 +31,13 @@ func RotatePoint(centerX, centerY, pointX, pointY, theta float64) (float64, floa
 	rotatedY := tempX*math.Sin(theta) + tempY*math.Cos(theta)
 	return rotatedX + centerX, rotatedY + centerY
 }
+
+// DegToRad coverts degrees to radians
+func DegToRad(deg float64) float64 {
+	return deg * 0.0174532925199432957
+}
+
+// RadToDeg converts radians to degrees
+func RadToDeg(rad float64) float64 {
+	return rad * 57.295779513082320876
+}

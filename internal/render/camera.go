@@ -81,7 +81,7 @@ func (c *Camera) isWithinView(x, y, w, h float64) bool {
 
 var drawnActors = 1
 
-func (c *Camera) drawActor(actor models.Actor) {
+func (c *Camera) DrawActor(actor models.Actor) {
 
 	adjustedX, adjustedY := c.TranslatePosition(actor.GetPosition())
 	adjustedW, adjustedH := c.TranslateSize(actor.GetSize())
@@ -146,7 +146,11 @@ func (c *Camera) DrawGame(g *game.Game) {
 	c.updateCameraPosition()
 
 	for _, a := range g.AllActors {
-		c.drawActor(a)
+		c.DrawActor(a)
+	}
+
+	for _, a := range g.TrajectoryPoints {
+		c.DrawActor(a)
 	}
 
 	if g.Rope != nil {

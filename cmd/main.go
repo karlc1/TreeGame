@@ -47,7 +47,11 @@ func run() {
 		camera.DrawGame(game)
 		win.Update()
 
-		physics.AdjustAngularVelocity(game.Player, game.Ground, game.GravityY)
+		physics.AdjustAngularVelocity(
+			game.Player.Box,
+			game,
+			config,
+		)
 
 		<-fpsTick
 

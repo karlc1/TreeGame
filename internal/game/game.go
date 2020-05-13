@@ -11,16 +11,17 @@ import (
 var game *Game
 
 type Game struct {
-	Config    *config.Config
-	PhysWorld *box2d.B2World
-	AllActors []models.Actor
-	AllJoints []*models.Joint
-	Player    *models.Player
-	TestBox   *models.Box
-	Rope      *models.Joint
-	Ground    *models.Box
-	GravityX  float64
-	GravityY  float64
+	Config           *config.Config
+	PhysWorld        *box2d.B2World
+	AllActors        []models.Actor
+	AllJoints        []*models.Joint
+	TrajectoryPoints []models.Actor
+	Player           *models.Player
+	TestBox          *models.Box
+	Rope             *models.Joint
+	Ground           *models.Box
+	GravityX         float64
+	GravityY         float64
 }
 
 func NewGameObj(config *config.Config) *Game {
@@ -28,6 +29,7 @@ func NewGameObj(config *config.Config) *Game {
 	gravityY := -20.0
 	gravity := box2d.MakeB2Vec2(gravityX, gravityY)
 	world := box2d.MakeB2World(gravity)
+
 	g := &Game{
 		Config:    config,
 		PhysWorld: &world,

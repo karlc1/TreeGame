@@ -98,6 +98,16 @@ func (c *Camera) DrawActor(actor models.Actor) {
 	c.renderer.DrawRect(adjustedX, adjustedY, adjustedW, adjustedH, float64(angle))
 }
 
+func (c *Camera) DrawCollisionPoint(x, y float64) {
+	adjustedX, adjustedY := c.TranslatePosition(x, y)
+	adjustedW, adjustedH := c.TranslateSize(0.6, 0.6)
+
+	if !c.isWithinView(adjustedX, adjustedY, adjustedW, adjustedH) {
+		return
+	}
+	c.renderer.DrawColoredRect(adjustedX, adjustedY, adjustedW, adjustedH, 0)
+}
+
 // TranslatePosition takes a coordinate from the physics simulation and translates it to a
 // point in the cameras viewport using the given camera position, viewport size and unitScale/zoom
 func (c *Camera) TranslatePosition(x, y float64) (adjustedX, adjustedY float64) {
@@ -151,6 +161,10 @@ func (c *Camera) DrawGame(g *game.Game) {
 
 	for _, a := range g.TrajectoryPoints {
 		c.DrawActor(a)
+	}
+
+	if g.TrajectoryCollisionPoint != nil {
+		c.DrawCollisionPoint(g.TrajectoryCollisionPoint.X, g.TrajectoryCollisionPoint.Y)
 	}
 
 	if g.Rope != nil {

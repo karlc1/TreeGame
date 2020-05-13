@@ -96,10 +96,10 @@ func setupGame(config *config.Config) *game.Game {
 func setupCamera(cfg *config.Config, game *game.Game, win *pixelgl.Window) *render.Camera {
 	camera := render.NewCamera(
 		cfg,
-		20,
+		15,
 		win,
 	)
-	camera.OffsetY = -20
+	camera.OffsetY = -13
 	camera.AttachTo(game.Player.Box)
 	return camera
 }

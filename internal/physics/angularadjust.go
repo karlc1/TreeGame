@@ -15,10 +15,11 @@ var lastVel float64
 // https://www.youtube.com/watch?v=BZwizmCI_g0
 func AdjustAngularVelocity(obj *models.Box, game *game.Game, cfg *config.Config) {
 
-	n := 100
+	n := 800
 
-	points := make([]models.Actor, n, n)
-	for i := 0; i < n; i++ {
+	points := make([]models.Actor, 0, 0)
+	lastPoint := box2d.B2Vec2{}
+	for i := 0; i < n; i += 8 {
 		startPos := obj.Body.GetPosition()
 		startVel := obj.Body.GetLinearVelocity()
 		fps := cfg.TargetFPS
@@ -31,7 +32,23 @@ func AdjustAngularVelocity(obj *models.Box, game *game.Game, cfg *config.Config)
 			Width:  0.1,
 			Height: 0.1,
 		}
-		points[i] = a
+
+		if i > 1 {
+
+			callBack := func(fixture *box2d.B2Fixture, point box2d.B2Vec2, normal box2d.B2Vec2, fraction float64) float64 {
+				// tweak what is a hit here
+				game.TrajectoryCollisionPoint = &point
+
+				// terminate loop once something is hit
+				i = n
+				return 0
+			}
+
+			game.PhysWorld.RayCast(callBack, lastPoint, p)
+		}
+
+		points = append(points, a)
+		lastPoint = p
 	}
 
 	game.TrajectoryPoints = points

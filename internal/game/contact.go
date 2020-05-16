@@ -23,6 +23,10 @@ func (c ContactListener) BeginContact(contact box2d.B2ContactInterface) {
 	if a == c.player || b == c.player {
 		c.player.State = models.GROUNDED
 	}
+
+	// needs to be called outsite of world update somehow
+	//game.Player.Box.Body.SetTransform(box2d.MakeB2Vec2(0, 0), 0)
+	c.player.Body.SetFixedRotation(true)
 }
 
 func (c ContactListener) EndContact(contact box2d.B2ContactInterface) {
@@ -32,6 +36,8 @@ func (c ContactListener) EndContact(contact box2d.B2ContactInterface) {
 	if a == c.player || b == c.player {
 		c.player.State = models.JUMPING
 	}
+
+	c.player.Body.SetFixedRotation(false)
 }
 
 func (c ContactListener) PreSolve(contact box2d.B2ContactInterface, oldManifold box2d.B2Manifold) {

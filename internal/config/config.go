@@ -8,7 +8,7 @@ type Config struct {
 
 func Default() *Config {
 	return &Config{
-		ScreenHeight: 600,
+		ScreenHeight: 800,
 		ScreenWidth:  1200,
 		TargetFPS:    60,
 	}

@@ -38,6 +38,9 @@ type Camera struct {
 	renderer *Renderer
 }
 
+type win interface {
+}
+
 // AttachTo lets the camera attach to an actor and
 // follow it. Probably attached to the player character
 // most of the time

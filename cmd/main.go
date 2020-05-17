@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"karlc/treegame/internal/config"
 	"karlc/treegame/internal/game"
 	"karlc/treegame/internal/physics"
@@ -19,6 +20,7 @@ func main() {
 func run() {
 	config := config.Default()
 	win := setupWindow(config)
+	fmt.Println(win.Bounds().Size())
 	inputHandler := game.NewInputHandler(win)
 	game := setupGame(config)
 	defer game.ExitGame()
@@ -64,17 +66,18 @@ func run() {
 			game.InitRope()
 		}
 	}
-
 }
 
 func setupWindow(cfg *config.Config) *pixelgl.Window {
 	winCfg := pixelgl.WindowConfig{
 		Title:  "Pixel Rocks!",
 		Bounds: pixel.R(0, 0, cfg.ScreenWidth, cfg.ScreenHeight),
-		VSync:  false,
+		VSync:  true,
+		//Resizable: true,
 	}
 
 	win, err := pixelgl.NewWindow(winCfg)
+	win.SetCursorVisible(false)
 	if err != nil {
 		panic(err)
 	}

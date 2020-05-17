@@ -24,7 +24,7 @@ func AdjustAngularVelocity(obj *models.Box, game *game.Game, cfg *config.Config)
 	collisionFound := false
 
 	t := 0
-	for i := 0; i < n; i += 2 {
+	for i := 0; i < n; i += 1 {
 		startPos := obj.Body.GetPosition()
 		startVel := obj.Body.GetLinearVelocity()
 		fps := cfg.TargetFPS
@@ -54,13 +54,13 @@ func AdjustAngularVelocity(obj *models.Box, game *game.Game, cfg *config.Config)
 			game.PhysWorld.RayCast(callBack, prevPoint, currPoint)
 		}
 
-		a := &models.DecorBox{
-			PosX:   currPoint.X,
-			PosY:   currPoint.Y,
-			Width:  0.25,
-			Height: 0.25,
-		}
-		points = append(points, a)
+		//a := &models.DecorBox{
+		//PosX:   currPoint.X,
+		//PosY:   currPoint.Y,
+		//Width:  0.25,
+		//Height: 0.25,
+		//}
+		//points = append(points, a)
 		prevPoint = currPoint
 	}
 
@@ -95,46 +95,20 @@ func AdjustAngularVelocity(obj *models.Box, game *game.Game, cfg *config.Config)
 		fullRotation = -fullRotation
 	}
 
-	finalAngle = math.Mod(currentAngle+angularVel*time, -fullRotation)
+	finalAngle = math.Mod(currentAngle+angularVel*time, fullRotation)
 
+	// TODO: play with negative/positive
 	if angularVel > 0 {
-		if finalAngle > 0 {
-			adjust(obj, time, false)
-		} else {
-			adjust(obj, time, true)
-		}
+		obj.Body.SetAngularVelocity(angularVel + 0 - finalAngle)
 	} else {
-		if finalAngle > 0 {
-			adjust(obj, time, false)
-		} else {
-			adjust(obj, time, true)
-		}
-
+		obj.Body.SetAngularVelocity(angularVel - 0 - finalAngle)
 	}
 
 	if tmp%4 == 0 {
-		fmt.Printf("Final angle: %v\n Current vel: %v\n\n", finalAngle, angularVel)
+		fmt.Printf("Final angle: %v\n Current vel: %v\n Current angle: %v \n\n", finalAngle, angularVel, math.Mod(currentAngle, fullRotation))
 	}
 
 	tmp++
-}
-
-func adjust(b *models.Box, t float64, increase bool) {
-
-	// adjust more if there is less time until collision
-	//timeComponent := 1 / t
-
-	currV := b.Body.GetAngularVelocity()
-	var newV float64
-	if increase {
-		//newV = currV + currV/500
-		newV = currV + 0.1
-	} else {
-		//newV = currV - currV/500
-		newV = currV - 0.1
-	}
-
-	b.Body.SetAngularVelocity(newV)
 }
 
 var tmp int64 = 0

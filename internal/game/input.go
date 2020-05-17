@@ -35,13 +35,11 @@ func (i *InputHandler) HandleInput() {
 	}
 
 	if i.win.Pressed(pixelgl.KeySpace) {
-		i.DestroyRope = true
-		i.NewRope = false
+		LetGoGrapple(i, game.Player.Box)
 	}
 
 	if i.win.Pressed(pixelgl.KeyX) {
-		i.NewRope = true
-		i.DestroyRope = false
+		Grapple(i, game.Player.Box)
 	}
 
 	if i.win.Pressed(pixelgl.KeyEnter) {

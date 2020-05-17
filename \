@@ -41,11 +41,4 @@ func Jump(b *models.Box) {
 func Grapple(i *InputHandler, b *models.Box) {
 	i.NewRope = true
 	i.DestroyRope = false
-	b.State = models.GRAPPLING
-}
-
-func LetGoGrapple(i *InputHandler, b *models.Box) {
-	i.DestroyRope = true
-	i.NewRope = false
-	b.State = models.JUMPING
 }

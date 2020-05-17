@@ -16,6 +16,54 @@ var lastVel float64
 // player land upright
 // https://www.youtube.com/watch?v=BZwizmCI_g0
 func AdjustAngularVelocity(obj *models.Box, game *game.Game, cfg *config.Config) {
+	// only adjust when falling
+	_, Y := obj.GetLinearVelocity()
+	if Y > 0 {
+		return
+	}
+	bodyAngle := obj.Body.GetAngle()
+	fullCircle := math.Pi * 2
+	if bodyAngle < 0 {
+		fullCircle = -fullCircle
+	}
+
+	newAngle := math.Mod(bodyAngle, fullCircle)
+	obj.Body.SetTransform(obj.Body.GetPosition(), newAngle)
+
+	vel := obj.Body.GetAngularVelocity()
+
+	var desiredAngle float64
+	desiredAngle = 0.0
+
+	if newAngle < -math.Pi {
+		desiredAngle = -2 * math.Pi
+	}
+	if newAngle > math.Pi {
+		desiredAngle = 2 * math.Pi
+	}
+
+	fmt.Println(Y)
+
+	nextAngle := bodyAngle + vel/30
+	totalRotation := desiredAngle - nextAngle
+	if totalRotation < 0 {
+		obj.Body.ApplyTorque(-100, true)
+	} else {
+		obj.Body.ApplyTorque(100, true)
+	}
+
+	return
+
+	// only adjust if jumping
+	if obj.State != models.JUMPING {
+		return
+	}
+
+	// only adjust when falling
+	//_, Y := obj.GetLinearVelocity()
+	//if Y > 0 {
+	//return
+	//}
 
 	n := 400
 
@@ -24,7 +72,7 @@ func AdjustAngularVelocity(obj *models.Box, game *game.Game, cfg *config.Config)
 	collisionFound := false
 
 	t := 0
-	for i := 0; i < n; i += 1 {
+	for i := 0; i < n; i += 4 {
 		startPos := obj.Body.GetPosition()
 		startVel := obj.Body.GetLinearVelocity()
 		fps := cfg.TargetFPS
@@ -84,29 +132,27 @@ func AdjustAngularVelocity(obj *models.Box, game *game.Game, cfg *config.Config)
 		return
 	}
 
-	currentAngle := obj.Body.GetAngle()
+	//var finalAngle float64
 
-	var finalAngle float64
+	//time := float64(t) * 1 / cfg.TargetFPS
 
-	time := float64(t) * 1 / cfg.TargetFPS
+	//fullRotation := math.Pi * 2
+	//if angularVel < 0 {
+	//fullRotation = -fullRotation
+	//}
 
-	fullRotation := math.Pi * 2
-	if angularVel < 0 {
-		fullRotation = -fullRotation
-	}
+	//finalAngle = math.Mod(currentAngle+angularVel*time, fullRotation)
 
-	finalAngle = math.Mod(currentAngle+angularVel*time, fullRotation)
+	//// TODO: play with negative/positive
+	//if angularVel < 0 {
+	//obj.Body.SetAngularVelocity(math.Mod(angularVel, fullRotation) - 0 - finalAngle)
+	//} else {
+	//obj.Body.SetAngularVelocity(math.Mod(angularVel, fullRotation) + 0 - finalAngle)
+	//}
 
-	// TODO: play with negative/positive
-	if angularVel > 0 {
-		obj.Body.SetAngularVelocity(angularVel + 0 - finalAngle)
-	} else {
-		obj.Body.SetAngularVelocity(angularVel - 0 - finalAngle)
-	}
-
-	if tmp%4 == 0 {
-		fmt.Printf("Final angle: %v\n Current vel: %v\n Current angle: %v \n\n", finalAngle, angularVel, math.Mod(currentAngle, fullRotation))
-	}
+	//if tmp%4 == 0 {
+	//fmt.Printf("Final angle: %v\n Current vel: %v\n Current angle: %v \n\n", finalAngle, angularVel, math.Mod(currentAngle, fullRotation))
+	//}
 
 	tmp++
 }

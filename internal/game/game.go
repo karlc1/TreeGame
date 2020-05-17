@@ -48,7 +48,7 @@ func (g *Game) ExitGame() {
 
 func (g *Game) InitPlayer() {
 	playerBox := models.NewBox(g.PhysWorld, true, -29, 10, 0.5, 0.8)
-	playerBox.SetDensity(100)
+	playerBox.SetDensity(1)
 	playerBox.SetFriction(0.6)
 	playerBox.Fixture.SetRestitution(0.15)
 	playerBox.Body.SetFixedRotation(false)

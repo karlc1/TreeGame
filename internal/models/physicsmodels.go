@@ -11,6 +11,7 @@ type State int
 const (
 	GROUNDED State = iota + 1
 	JUMPING
+	GRAPPLING
 )
 
 type Box struct {

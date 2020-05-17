@@ -88,7 +88,7 @@ func setupGame(config *config.Config) *game.Game {
 	gameObj := game.NewGameObj(config)
 	gameObj.InitPlayer()
 	gameObj.InitGround()
-	gameObj.InitDecor(350)
+	gameObj.InitDecor(100)
 	gameObj.InitTestBox()
 	gameObj.InitRope()
 	gameObj.InitContactListener()

@@ -1,7 +1,6 @@
 package physics
 
 import (
-	"fmt"
 	"karlc/treegame/internal/config"
 	"karlc/treegame/internal/game"
 	"karlc/treegame/internal/models"
@@ -16,43 +15,14 @@ var lastVel float64
 // player land upright
 // https://www.youtube.com/watch?v=BZwizmCI_g0
 func AdjustAngularVelocity(obj *models.Box, game *game.Game, cfg *config.Config) {
-	// only adjust when falling
-	_, Y := obj.GetLinearVelocity()
-	if Y > 0 {
-		return
-	}
-	bodyAngle := obj.Body.GetAngle()
-	fullCircle := math.Pi * 2
-	if bodyAngle < 0 {
-		fullCircle = -fullCircle
-	}
-
-	newAngle := math.Mod(bodyAngle, fullCircle)
-	obj.Body.SetTransform(obj.Body.GetPosition(), newAngle)
-
-	vel := obj.Body.GetAngularVelocity()
-
-	var desiredAngle float64
-	desiredAngle = 0.0
-
-	if newAngle < -math.Pi {
-		desiredAngle = -2 * math.Pi
-	}
-	if newAngle > math.Pi {
-		desiredAngle = 2 * math.Pi
-	}
-
-	fmt.Println(Y)
-
-	nextAngle := bodyAngle + vel/30
-	totalRotation := desiredAngle - nextAngle
-	if totalRotation < 0 {
-		obj.Body.ApplyTorque(-100, true)
-	} else {
-		obj.Body.ApplyTorque(100, true)
-	}
 
 	return
+
+	// only adjust when falling
+	//_, Y := obj.GetLinearVelocity()
+	//if Y > 0 {
+	//return
+	//}
 
 	// only adjust if jumping
 	if obj.State != models.JUMPING {
@@ -125,13 +95,14 @@ func AdjustAngularVelocity(obj *models.Box, game *game.Game, cfg *config.Config)
 	if t == 0 || t == n {
 		return
 	}
-	angularVel := obj.Body.GetAngularVelocity()
+	//angularVel := obj.Body.GetAngularVelocity()
 
 	// if angular velocit is already 0, there is no need to adjust
-	if angularVel == 0 {
-		return
-	}
+	//if angularVel == 0 {
+	//return
+	//}
 
+	//currentAngle := obj.Body.GetAngle()
 	//var finalAngle float64
 
 	//time := float64(t) * 1 / cfg.TargetFPS
@@ -143,9 +114,13 @@ func AdjustAngularVelocity(obj *models.Box, game *game.Game, cfg *config.Config)
 
 	//finalAngle = math.Mod(currentAngle+angularVel*time, fullRotation)
 
-	//// TODO: play with negative/positive
-	//if angularVel < 0 {
-	//obj.Body.SetAngularVelocity(math.Mod(angularVel, fullRotation) - 0 - finalAngle)
+	//adjustFactor := 0.5 / float64(t) * 1000
+	//if adjustFactor < 4 {
+	//adjustFactor = 0
+	//}
+
+	// TODO: play with negative/positive
+	//if angularVel < 0 { obj.Body.SetAngularVelocity(math.Mod(angularVel, fullRotation) - 0 - finalAngle)
 	//} else {
 	//obj.Body.SetAngularVelocity(math.Mod(angularVel, fullRotation) + 0 - finalAngle)
 	//}
@@ -153,6 +128,55 @@ func AdjustAngularVelocity(obj *models.Box, game *game.Game, cfg *config.Config)
 	//if tmp%4 == 0 {
 	//fmt.Printf("Final angle: %v\n Current vel: %v\n Current angle: %v \n\n", finalAngle, angularVel, math.Mod(currentAngle, fullRotation))
 	//}
+
+	// adjust more closer to collision
+	adjustFactor := 0.5 / float64(t) * 500
+
+	////fmt.Println(adjustFactor)
+
+	bodyAngle := obj.Body.GetAngle()
+	fullCircle := math.Pi * 2
+	if bodyAngle < 0 {
+		fullCircle = -fullCircle
+	}
+
+	//newAngle := math.Mod(bodyAngle, fullCircle)
+	//obj.Body.SetTransform(obj.Body.GetPosition(), newAngle)
+
+	vel := obj.Body.GetAngularVelocity()
+
+	var desiredAngle float64
+	desiredAngle = 0.0
+
+	//if newAngle < -math.Pi {
+	if vel > 0 {
+		desiredAngle = -2 * math.Pi
+	}
+	//if newAngle > math.Pi {
+	if vel < 0 {
+		desiredAngle = 2 * math.Pi
+	}
+
+	//fmt.Println(desiredAngle)
+
+	if vel == 0 {
+		if bodyAngle < 0 {
+			desiredAngle = 2 * math.Pi
+		}
+		if bodyAngle > 0 {
+			desiredAngle = -2 * math.Pi
+		}
+	}
+
+	nextAngle := bodyAngle + vel/60
+	totalRotation := desiredAngle - nextAngle
+	if totalRotation < 0 {
+		obj.Body.ApplyTorque(-adjustFactor, true)
+	} else {
+		obj.Body.ApplyTorque(adjustFactor, true)
+	}
+
+	//return
 
 	tmp++
 }

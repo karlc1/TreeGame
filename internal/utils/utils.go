@@ -20,8 +20,8 @@ func RandFloat64(min, max float64) float64 {
 
 	// horrible hack to get negative minimum range
 	// up to 3 decimal precision
-	i := rand.Intn(int(max*1000)-int(min*1000)) + int(min*1000)
-	return float64(i) / 1000.0
+	i := rand.Intn(int(max*100000)-int(min*100000)) + int(min*100000)
+	return float64(i) / 100000.0
 }
 
 // rotate rotates a corner around a center point theta radians

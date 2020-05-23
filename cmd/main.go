@@ -27,6 +27,7 @@ func run() {
 	inputHandler := game.NewInputHandler(win)
 	game := setupGame()
 	camera := setupCamera(game, win)
+	//treeCamera := setupTreeCamera(game, win)
 
 	fpsTick := time.Tick(time.Second / TARGET_FPS)
 	secondTick := time.Tick(time.Second)
@@ -54,7 +55,13 @@ func run() {
 		win.Clear(colornames.Black)
 		camera.TestDraw()
 		camera.DrawGame(game)
+		//treeCamera.DrawGame()
 		win.Update()
+
+		playerPosX, _ := game.Player.GetPosition()
+		if playerPosX >= game.Tree.PosX-3 && playerPosX <= game.Tree.PosX+3 {
+			camera.TreeView = true
+		}
 
 		<-fpsTick
 
@@ -90,7 +97,7 @@ func setupGame() *game.Game {
 	gameObj.InitGround()
 	gameObj.InitDecor(200)
 	gameObj.InitTestBox()
-	gameObj.InitRope()
+	//gameObj.InitRope()
 	gameObj.InitTree()
 	contactListener := physics.NewContactListener(gameObj.Player)
 	gameObj.PhysWorld.SetContactListener(contactListener)
@@ -107,5 +114,18 @@ func setupCamera(game *game.Game, win *pixelgl.Window) *render.Camera {
 	)
 	camera.OffsetY = -20
 	camera.AttachTo(game.Player)
+	return camera
+}
+
+func setupTreeCamera(game *game.Game, win *pixelgl.Window) *render.TreeCamera {
+	camera := render.NewTreeCamera(
+		SCREEN_WITH,
+		SCREEN_HEIGHT,
+		20,
+		win,
+		game.Player,
+		game.Tree,
+	)
+	camera.OffsetY = -20
 	return camera
 }

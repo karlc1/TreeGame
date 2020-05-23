@@ -1,8 +1,6 @@
 package models
 
 import (
-	"fmt"
-
 	"github.com/ByteArena/box2d"
 )
 
@@ -117,12 +115,6 @@ func NewRope(world *box2d.B2World, player, box *Box) *Joint {
 
 	jointDef.LocalAnchorA = box2d.MakeB2Vec2(0, 1)
 	jointDef.LocalAnchorB = box2d.MakeB2Vec2(0, -1)
-
-	fmt.Printf("ANCHOR PLAYER X: %v \n", jointDef.LocalAnchorA.X)
-	fmt.Printf("ANCHOR PLAYER Y: %v \n", jointDef.LocalAnchorA.Y)
-
-	fmt.Printf("ANCHOR BOX X: %v \n", jointDef.LocalAnchorB.X)
-	fmt.Printf("ANCHOR BOX Y: %v \n", jointDef.LocalAnchorB.Y)
 
 	j := world.CreateJoint(&jointDef)
 

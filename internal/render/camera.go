@@ -1,6 +1,7 @@
 package render
 
 import (
+	"fmt"
 	"karlc/treegame/internal/game"
 	"karlc/treegame/internal/models"
 	"karlc/treegame/internal/utils"
@@ -35,6 +36,8 @@ type Camera struct {
 	OffsetX float64
 
 	renderer *Renderer
+
+	TreeView bool
 }
 
 // AttachTo lets the camera attach to an actor and
@@ -46,9 +49,14 @@ func (c *Camera) AttachTo(b models.PhysicsActor) {
 
 func (c *Camera) updateCameraPosition() {
 
+	if c.TreeView {
+		_, aY := c.attachedTo.GetPosition()
+		c.PosY = aY * c.zoom
+		return
+	}
+
 	aX, aY := c.attachedTo.GetPosition()
 	c.PosX, c.PosY = aX*c.zoom, aY*c.zoom
-
 	c.updateZoom()
 }
 
@@ -80,8 +88,63 @@ func (c *Camera) isWithinView(x, y, w, h float64) bool {
 
 var drawnActors = 1
 
-func (c *Camera) drawActor(actor models.Actor) {
+func (c *Camera) drawPlayerNormal() {
+	c.drawActor(c.attachedTo)
+}
 
+func (c *Camera) drawPlayerTree() {
+	player := c.attachedTo
+	adjustedW, adjustedH := c.TranslateSize(player.GetSize())
+	_, adjustedY := c.TranslatePosition(player.GetPosition())
+
+	//adjustedOffsetX := float64(c.viewportHeight) * c.OffsetX / 100
+	adjustedX := float64(c.viewportWidth / 2)
+
+	angle := player.GetAngle()
+	c.renderer.DrawRect(adjustedX, adjustedY, adjustedW, adjustedH, float64(angle))
+}
+
+func (c *Camera) drawTreeDecor(tree *models.Tree) {
+
+	//c.renderer.DrawText(500, 500, fmt.Sprintf("%v", int(0-(tree.Width/2))))
+	for _, d := range tree.Decor {
+
+		relPosX := d.PosX + tree.RotationOffset
+		// check if decor is placed behind currently visible half of tree
+		if relPosX < 0-tree.Width/2 || relPosX > tree.Width/2 {
+			continue
+		}
+
+		// adjusted for tree position
+		tpx := tree.PosX + d.PosX + tree.RotationOffset
+		tpy := tree.Base + d.PosY
+
+		adjustedX, adjustedY := c.TranslatePosition(tpx, tpy)
+		adjustedW, adjustedH := c.TranslateSize(d.GetSize())
+
+		c.renderer.DrawRectRed(adjustedX, adjustedY, adjustedW, adjustedH, 0)
+		//c.renderer.DrawText(adjustedX, adjustedY, fmt.Sprintf("%v", int(relPosX)))
+
+		//var xx float64
+		//if d.PosX >= tree.RotationOffset {
+		//xx = tree.RotationOffset - d.PosX
+		//} else {
+		//xx = tree.RotationOffset + (tree.RotationOffset - d.PosX)
+		//}
+
+		//adjustedX, adjustedY := c.TranslatePosition(xx, tree.Base+d.Height)
+		//adjustedW, adjustedH := c.TranslateSize(d.Width, d.Height)
+		//c.renderer.DrawRect(adjustedX, adjustedY, adjustedW, adjustedH, 0)
+	}
+}
+
+func (c *Camera) updateTreeRotation(tree *models.Tree, player models.PhysicsActor) {
+	px, _ := player.GetPosition()
+	tree.RotationOffset = tree.PosX - px
+	fmt.Println(tree.RotationOffset)
+}
+
+func (c *Camera) drawActor(actor models.Actor) {
 	adjustedX, adjustedY := c.TranslatePosition(actor.GetPosition())
 	adjustedW, adjustedH := c.TranslateSize(actor.GetSize())
 
@@ -89,11 +152,8 @@ func (c *Camera) drawActor(actor models.Actor) {
 	if !c.isWithinView(adjustedX, adjustedY, adjustedW, adjustedH) {
 		return
 	}
-
 	drawnActors++
-
 	angle := actor.GetAngle()
-
 	c.renderer.DrawRect(adjustedX, adjustedY, adjustedW, adjustedH, float64(angle))
 }
 
@@ -143,6 +203,14 @@ func (c *Camera) DrawGame(g *game.Game) {
 	drawnActors = 0
 
 	c.updateCameraPosition()
+
+	if c.TreeView {
+		c.updateTreeRotation(g.Tree, g.Player)
+		c.drawTreeDecor(g.Tree)
+		c.drawPlayerTree()
+	} else {
+		c.drawPlayerNormal()
+	}
 
 	for _, a := range g.AllActors {
 		c.drawActor(a)

@@ -1,11 +1,14 @@
 package render
 
 import (
+	"fmt"
 	"math"
 
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
+	"github.com/faiface/pixel/text"
+	"golang.org/x/image/font/basicfont"
 	//rl "github.com/gen2brain/raylib-go/raylib"
 )
 
@@ -33,7 +36,14 @@ func (r *Renderer) DrawLine(aX, aY, bX, bY float64) {
 	imd.Draw(r.window)
 }
 
-func (r *Renderer) DrawRect(x, y, w, h, a float64) {
+func (r *Renderer) DrawText(x, y float64, message string) {
+	basicAtlas := text.NewAtlas(basicfont.Face7x13, text.ASCII)
+	basicTxt := text.New(pixel.V(x, y), basicAtlas)
+	fmt.Fprintln(basicTxt, message)
+	basicTxt.Draw(r.window, pixel.IM.Scaled(basicTxt.Orig, 1))
+}
+
+func (r *Renderer) drawRectWithColor(x, y, w, h, a float64, c pixel.RGBA) {
 	tlx, tly := x-w/2, y+h/2 // top left
 	trx, try := x+w/2, y+h/2 // top right
 	blx, bly := x-w/2, y-h/2 // bottom left
@@ -48,6 +58,7 @@ func (r *Renderer) DrawRect(x, y, w, h, a float64) {
 	}
 
 	imd := imdraw.New(nil)
+	imd.Color = c
 	imd.EndShape = imdraw.RoundEndShape
 	imd.Push(pixel.V(tlx, tly))
 	imd.Push(pixel.V(trx, try))
@@ -56,6 +67,16 @@ func (r *Renderer) DrawRect(x, y, w, h, a float64) {
 	imd.Push(pixel.V(tlx, tly))
 	imd.Polygon(0)
 	imd.Draw(r.window)
+}
+
+func (r *Renderer) DrawRect(x, y, w, h, a float64) {
+	c := pixel.RGB(1, 1, 1)
+	r.drawRectWithColor(x, y, w, h, a, c)
+}
+
+func (r *Renderer) DrawRectRed(x, y, w, h, a float64) {
+	c := pixel.RGB(1, 0, 0)
+	r.drawRectWithColor(x, y, w, h, a, c)
 }
 
 // rotate rotates a corner around a center point theta radians

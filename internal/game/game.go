@@ -32,13 +32,12 @@ func NewGameObj() *Game {
 }
 
 func (g *Game) InitPlayer() {
-	player := models.NewBox(g.PhysWorld, true, -29, 10, 0.5, 0.8)
+	player := models.NewBox(g.PhysWorld, true, 15, -14, 0.5, 0.8)
 	player.SetDensity(100)
 	player.SetFriction(0.6)
 	player.Fixture.SetRestitution(0.15)
 	player.Body.SetFixedRotation(false)
 	player.Fixture.SetUserData(player)
-	g.AllActors = append(g.AllActors, player)
 	g.Player = player
 }
 

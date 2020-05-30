@@ -32,7 +32,7 @@ func (t *Tree) InitTreeDecor() {
 	for i := 0; i < n; i++ {
 		xSize := 0.4
 		ySize := utils.RandFloat64(0.5, 1)
-		posX := utils.RandFloat64(-(t.Circumference / 2), t.Circumference/2)
+		posX := utils.RandFloat64(0, t.Circumference)
 		posY := utils.RandFloat64(0, t.Height)
 
 		t.Decor = append(t.Decor, &DecorBox{

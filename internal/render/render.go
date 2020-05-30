@@ -2,7 +2,11 @@ package render
 
 import (
 	"fmt"
+	"image"
 	"math"
+	"os"
+
+	_ "image/jpeg"
 
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
@@ -17,13 +21,52 @@ import (
 // be done by the camera and sent to the renderer
 // for drawing only
 type Renderer struct {
-	window *pixelgl.Window
+	window   *pixelgl.Window
+	TreeTile *pixel.Sprite
+	TreePic  *pixel.PictureData
+}
+
+func loadPicture(path string) (*pixel.PictureData, *pixel.Sprite) {
+	file, err := os.Open(path)
+	if err != nil {
+		panic(fmt.Sprintf("Error opening file '%s': %s", path, err.Error()))
+	}
+	defer file.Close()
+	img, _, err := image.Decode(file)
+	if err != nil {
+		panic(fmt.Sprintf("Error decoding file '%s': %s", path, err.Error()))
+	}
+	pic, err := pixel.PictureDataFromImage(img), nil
+	if err != nil {
+		panic(fmt.Sprintf("Error loading picture from file '%s': %s", path, err.Error()))
+	}
+	return pic, pixel.NewSprite(pic, pic.Bounds())
 }
 
 func NewRenderer(window *pixelgl.Window) *Renderer {
+
+	treePic, treeTile := loadPicture("./assets/sprites/treetile.jpg")
+	//treeTile.Set(treePic, pixel.R(
+	//treeTile.Frame().Min.X,
+	//treeTile.Frame().Min.Y,
+	//treeTile.Frame().Max.X,
+	//treeTile.Frame().Max.Y),
+	//)
+
 	return &Renderer{
-		window: window,
+		window:   window,
+		TreeTile: treeTile,
+		TreePic:  treePic,
 	}
+}
+
+func (r *Renderer) DrawTreeTile() {
+
+	m := pixel.IM.Moved(r.window.Bounds().Center())
+
+	newTile := pixel.NewSprite(r.TreePic, r.TreePic.Bounds())
+
+	r.TreeTile.Draw(r.window, m)
 }
 
 // DrawLine between point a and b

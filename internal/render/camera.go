@@ -224,6 +224,8 @@ func (c *Camera) DrawGame(g *game.Game) {
 		c.DrawTree(g.Tree)
 	}
 
+	c.renderer.DrawTreeTile()
+
 	//for _, j := range g.AllJoints {
 	//c.drawJoint(j)
 	//}

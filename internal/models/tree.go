@@ -3,6 +3,9 @@ package models
 import (
 	"karlc/treegame/internal/utils"
 	"math"
+
+	"github.com/faiface/pixel"
+	"github.com/faiface/pixel/pixelgl"
 )
 
 type Tree struct {
@@ -13,6 +16,9 @@ type Tree struct {
 	Circumference  float64
 	Decor          []*DecorBox
 	RotationOffset float64 // not angle, but how many units player has moved?
+	SpriteVecs     []pixel.Vec
+	Sprite         *pixel.Sprite
+	Canvas         *pixelgl.Canvas
 }
 
 func NewTree(w, h, x, b float64) *Tree {
@@ -22,9 +28,27 @@ func NewTree(w, h, x, b float64) *Tree {
 		PosX:          x,
 		Base:          b,
 		Circumference: 2 * math.Pi * (w / 2),
+		Canvas:        pixelgl.NewCanvas(pixel.ZR),
 	}
 	t.InitTreeDecor()
+	t.InitSprite()
 	return t
+}
+
+func (t *Tree) InitSprite() {
+	t.Sprite = utils.LoadSprite("./assets/sprites/treetile-small.jpg")
+
+}
+
+func (t *Tree) InitSprites() {
+	t.InitSprite()
+	spriteVecs := make([]pixel.Vec, 0, 0)
+	for x := 0.0; x < t.Width; x += t.Width / t.Sprite.Frame().W() {
+		for y := 0.0; y < t.Height; y += t.Height / t.Sprite.Frame().H() {
+			spriteVecs = append(spriteVecs, pixel.Vec{X: x, Y: y})
+		}
+	}
+	t.SpriteVecs = spriteVecs
 }
 
 func (t *Tree) InitTreeDecor() {

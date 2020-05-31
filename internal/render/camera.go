@@ -7,7 +7,9 @@ import (
 	"karlc/treegame/internal/utils"
 	"math"
 
+	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
+	"golang.org/x/image/colornames"
 	//"karlc/treegame/internal/models"
 	//rl "github.com/gen2brain/raylib-go/raylib"
 )
@@ -224,7 +226,7 @@ func (c *Camera) DrawGame(g *game.Game) {
 		c.DrawTree(g.Tree)
 	}
 
-	c.renderer.DrawTreeTile()
+	c.renderer.DrawTreeTile(g.Tree)
 
 	//for _, j := range g.AllJoints {
 	//c.drawJoint(j)
@@ -272,4 +274,36 @@ func (c *Camera) DrawTree(tree *models.Tree) {
 	c.renderer.DrawLine(tblx, tbly, ttlx, ttly)
 	c.renderer.DrawLine(tbrx, tbry, ttrx, ttry)
 	c.renderer.DrawLine(ttlx, ttly, ttrx, ttry)
+
+	//////
+
+	treeCenterX, treeCenterY := c.TranslatePosition(
+		tree.PosX,
+		(tree.Height+tree.Base)/2,
+	)
+
+	minX, minY := c.TranslatePosition(
+		tree.PosX-tree.Width/2,
+		tree.Base,
+	)
+
+	maxX, maxY := c.TranslatePosition(
+		tree.PosX+tree.Width/2,
+		tree.Base+tree.Height,
+	)
+
+	tree.Canvas.SetBounds(
+		pixel.R(minX, minY, maxX, maxY).
+			Moved(pixel.V(treeCenterX, treeCenterY)),
+	)
+
+	tree.Canvas.Clear(colornames.Chocolate)
+	tree.Canvas.Draw(c.renderer.window, pixel.IM.Moved(tree.Canvas.Bounds().Center()))
+
+	c.renderer.DrawCanvas(tree)
+
+}
+
+func (c *Camera) DrawTreeSprites() {
+
 }

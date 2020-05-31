@@ -3,6 +3,7 @@ package render
 import (
 	"fmt"
 	"image"
+	"karlc/treegame/internal/models"
 	"math"
 	"os"
 
@@ -21,12 +22,10 @@ import (
 // be done by the camera and sent to the renderer
 // for drawing only
 type Renderer struct {
-	window   *pixelgl.Window
-	TreeTile *pixel.Sprite
-	TreePic  *pixel.PictureData
+	window *pixelgl.Window
 }
 
-func loadPicture(path string) (*pixel.PictureData, *pixel.Sprite) {
+func loadSprite(path string) *pixel.Sprite {
 	file, err := os.Open(path)
 	if err != nil {
 		panic(fmt.Sprintf("Error opening file '%s': %s", path, err.Error()))
@@ -40,12 +39,12 @@ func loadPicture(path string) (*pixel.PictureData, *pixel.Sprite) {
 	if err != nil {
 		panic(fmt.Sprintf("Error loading picture from file '%s': %s", path, err.Error()))
 	}
-	return pic, pixel.NewSprite(pic, pic.Bounds())
+	return pixel.NewSprite(pic, pic.Bounds())
 }
 
 func NewRenderer(window *pixelgl.Window) *Renderer {
 
-	treePic, treeTile := loadPicture("./assets/sprites/treetile.jpg")
+	//treePic, treeTile := loadPicture("./assets/sprites/treetile-small.jpg")
 	//treeTile.Set(treePic, pixel.R(
 	//treeTile.Frame().Min.X,
 	//treeTile.Frame().Min.Y,
@@ -54,19 +53,20 @@ func NewRenderer(window *pixelgl.Window) *Renderer {
 	//)
 
 	return &Renderer{
-		window:   window,
-		TreeTile: treeTile,
-		TreePic:  treePic,
+		window: window,
+		//TreeTile: treeTile,
+		//TreePic:  treePic,
 	}
 }
 
-func (r *Renderer) DrawTreeTile() {
+func (r *Renderer) DrawTreeTile(t *models.Tree) {
 
-	m := pixel.IM.Moved(r.window.Bounds().Center())
+	for _, p := range t.SpriteVecs {
+		m := pixel.IM.Moved(p)
+		t.Sprite.Draw(r.window, m)
+	}
 
-	newTile := pixel.NewSprite(r.TreePic, r.TreePic.Bounds())
-
-	r.TreeTile.Draw(r.window, m)
+	//r.TreeTile.Draw(r.window, pixel.IM)
 }
 
 // DrawLine between point a and b
@@ -120,6 +120,10 @@ func (r *Renderer) DrawRect(x, y, w, h, a float64) {
 func (r *Renderer) DrawRectRed(x, y, w, h, a float64) {
 	c := pixel.RGB(1, 0, 0)
 	r.drawRectWithColor(x, y, w, h, a, c)
+}
+
+func (r *Renderer) DrawCanvas(t *models.Tree) {
+
 }
 
 // rotate rotates a corner around a center point theta radians

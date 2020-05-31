@@ -1,9 +1,14 @@
 package utils
 
 import (
+	"fmt"
+	"image"
 	"math"
 	"math/rand"
+	"os"
 	"time"
+
+	"github.com/faiface/pixel"
 )
 
 func RandFloat32(min, max float32) float32 {
@@ -30,4 +35,21 @@ func RotatePoint(centerX, centerY, pointX, pointY, theta float64) (float64, floa
 	rotatedX := tempX*math.Cos(theta) - tempY*math.Sin(theta)
 	rotatedY := tempX*math.Sin(theta) + tempY*math.Cos(theta)
 	return rotatedX + centerX, rotatedY + centerY
+}
+
+func LoadSprite(path string) *pixel.Sprite {
+	file, err := os.Open(path)
+	if err != nil {
+		panic(fmt.Sprintf("Error opening file '%s': %s", path, err.Error()))
+	}
+	defer file.Close()
+	img, _, err := image.Decode(file)
+	if err != nil {
+		panic(fmt.Sprintf("Error decoding file '%s': %s", path, err.Error()))
+	}
+	pic, err := pixel.PictureDataFromImage(img), nil
+	if err != nil {
+		panic(fmt.Sprintf("Error loading picture from file '%s': %s", path, err.Error()))
+	}
+	return pixel.NewSprite(pic, pic.Bounds())
 }

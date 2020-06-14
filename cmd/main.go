@@ -95,7 +95,7 @@ func setupGame() *game.Game {
 	gameObj := game.NewGameObj()
 	gameObj.InitPlayer()
 	gameObj.InitGround()
-	gameObj.InitDecor(200)
+	gameObj.InitDecor(100)
 	gameObj.InitTestBox()
 	//gameObj.InitRope()
 	gameObj.InitTree()

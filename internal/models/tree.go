@@ -36,7 +36,7 @@ func NewTree(w, h, x, b float64) *Tree {
 }
 
 func (t *Tree) InitSprite() {
-	t.Sprite = utils.LoadSprite("./assets/sprites/treetile-small.jpg")
+	t.Sprite = utils.LoadSprite("./assets/sprites/treetile.jpg")
 
 }
 

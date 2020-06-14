@@ -1,7 +1,6 @@
 package render
 
 import (
-	"fmt"
 	"karlc/treegame/internal/game"
 	"karlc/treegame/internal/models"
 	"karlc/treegame/internal/utils"
@@ -143,7 +142,6 @@ func (c *Camera) drawTreeDecor(tree *models.Tree) {
 func (c *Camera) updateTreeRotation(tree *models.Tree, player models.PhysicsActor) {
 	px, _ := player.GetPosition()
 	tree.RotationOffset = tree.PosX - px
-	fmt.Println(tree.RotationOffset)
 }
 
 func (c *Camera) drawActor(actor models.Actor) {
@@ -261,25 +259,25 @@ func (c *Camera) TestDraw() {
 
 func (c *Camera) DrawTree(tree *models.Tree) {
 
-	blx, bly := tree.PosX-tree.Width/2, tree.Base
-	brx, bry := tree.PosX+tree.Width/2, tree.Base
-	tlx, tly := tree.PosX-tree.Width/2, tree.Base+tree.Height
-	trx, try := tree.PosX+tree.Width/2, tree.Base+tree.Height
+	//blx, bly := tree.PosX-tree.Width/2, tree.Base
+	//brx, bry := tree.PosX+tree.Width/2, tree.Base
+	//tlx, tly := tree.PosX-tree.Width/2, tree.Base+tree.Height
+	//trx, try := tree.PosX+tree.Width/2, tree.Base+tree.Height
 
-	tblx, tbly := c.TranslatePosition(blx, bly)
-	tbrx, tbry := c.TranslatePosition(brx, bry)
-	ttlx, ttly := c.TranslatePosition(tlx, tly)
-	ttrx, ttry := c.TranslatePosition(trx, try)
+	//tblx, tbly := c.TranslatePosition(blx, bly)
+	//tbrx, tbry := c.TranslatePosition(brx, bry)
+	//ttlx, ttly := c.TranslatePosition(tlx, tly)
+	//ttrx, ttry := c.TranslatePosition(trx, try)
 
-	c.renderer.DrawLine(tblx, tbly, ttlx, ttly)
-	c.renderer.DrawLine(tbrx, tbry, ttrx, ttry)
-	c.renderer.DrawLine(ttlx, ttly, ttrx, ttry)
+	//c.renderer.DrawLine(tblx, tbly, ttlx, ttly)
+	//c.renderer.DrawLine(tbrx, tbry, ttrx, ttry)
+	//c.renderer.DrawLine(ttlx, ttly, ttrx, ttry)
 
 	//////
 
 	treeCenterX, treeCenterY := c.TranslatePosition(
 		tree.PosX,
-		(tree.Height+tree.Base)/2,
+		(tree.Height+(tree.Base*2))/2,
 	)
 
 	minX, minY := c.TranslatePosition(
@@ -287,18 +285,21 @@ func (c *Camera) DrawTree(tree *models.Tree) {
 		tree.Base,
 	)
 
+	c.renderer.DrawPoint(minX, minY)
+
+	c.renderer.DrawPoint(treeCenterX, treeCenterY)
+
 	maxX, maxY := c.TranslatePosition(
 		tree.PosX+tree.Width/2,
 		tree.Base+tree.Height,
 	)
 
-	tree.Canvas.SetBounds(
-		pixel.R(minX, minY, maxX, maxY).
-			Moved(pixel.V(treeCenterX, treeCenterY)),
-	)
+	c.renderer.DrawPoint(maxX, maxY)
 
-	tree.Canvas.Clear(colornames.Chocolate)
-	tree.Canvas.Draw(c.renderer.window, pixel.IM.Moved(tree.Canvas.Bounds().Center()))
+	tree.Canvas.SetBounds(pixel.R(minX, minY, maxX, maxY))
+
+	tree.Canvas.Clear(colornames.Brown)
+	tree.Canvas.Draw(c.renderer.window, pixel.IM.Moved(pixel.Vec{X: treeCenterX, Y: treeCenterY}))
 
 	c.renderer.DrawCanvas(tree)
 

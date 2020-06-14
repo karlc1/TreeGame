@@ -1,7 +1,6 @@
 package render
 
 import (
-	"fmt"
 	"karlc/treegame/internal/models"
 
 	"github.com/faiface/pixel/pixelgl"
@@ -72,9 +71,6 @@ func (t *TreeCamera) updateCameraPosition() {
 //}
 
 func (t *TreeCamera) TranslatePosition(x, y float64) (adjustedX, adjustedY float64) {
-
-	fmt.Println(t.PosX)
-	fmt.Println(t.PosY)
 
 	adjustedOffsetY := float64(t.viewportHeight) * t.OffsetY / 100
 	adjustedOffsetX := float64(t.viewportHeight) * t.OffsetX / 100

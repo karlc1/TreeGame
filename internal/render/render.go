@@ -122,6 +122,15 @@ func (r *Renderer) DrawRectRed(x, y, w, h, a float64) {
 	r.drawRectWithColor(x, y, w, h, a, c)
 }
 
+func (r *Renderer) DrawRectGreen(x, y, w, h, a float64) {
+	c := pixel.RGB(0, 1, 0)
+	r.drawRectWithColor(x, y, w, h, a, c)
+}
+
+func (r *Renderer) DrawPoint(x, y float64) {
+	r.DrawRectGreen(x, y, 15, 15, 0)
+}
+
 func (r *Renderer) DrawCanvas(t *models.Tree) {
 
 }

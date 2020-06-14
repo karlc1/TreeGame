@@ -315,18 +315,28 @@ func (c *Camera) DrawTree(tree *models.Tree) {
 	//fmt.Println(spriteWidth)
 	//fmt.Println(tree.Width * c.unitScale)
 
-	for w := 0.0; w <= tree.Width*c.unitScale; w += spriteWidth {
+	//batch := pixel.NewBatch(&pixel.TrianglesData{}, tree.SpritePicture)
+	//indicies := make([]pixel.Matrix, 0, 0)
+	//batch.Clear()
 
-		for h := 0.0; h <= tree.Height*c.unitScale; h += spriteHeight {
+	for w := 0.0; w <= tree.Width*c.unitScale; w += spriteWidth - 1 {
+
+		for h := 0.0; h <= tree.Height*c.unitScale; h += spriteHeight - 1 {
 
 			mat := pixel.IM
 			//mat = mat.Scaled(tree.Sprite.Frame().Center(), scale)
 			//mat = mat.Moved(tree.Canvas.Bounds().Center())
 			mat = mat.Scaled(tree.Sprite.Frame().Min, scale)
 			mat = mat.Moved(pixel.V(x+w, y+h))
+
+			//indicies = append(indicies, mat)
+
 			tree.Sprite.Draw(tree.Canvas, mat)
+			//tree.Sprite.Draw(batch, mat)
 		}
 	}
+
+	//batch.Draw(tree.Canvas)
 
 	////////////
 

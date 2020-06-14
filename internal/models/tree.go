@@ -18,6 +18,7 @@ type Tree struct {
 	RotationOffset float64 // not angle, but how many units player has moved?
 	SpriteVecs     []pixel.Vec
 	Sprite         *pixel.Sprite
+	SpritePicture  *pixel.PictureData
 	Canvas         *pixelgl.Canvas
 }
 
@@ -36,7 +37,8 @@ func NewTree(w, h, x, b float64) *Tree {
 }
 
 func (t *Tree) InitSprite() {
-	t.Sprite = utils.LoadSprite("./assets/sprites/treetile.jpg")
+	t.SpritePicture = utils.LoadPicture("./assets/sprites/treetile.jpg")
+	t.Sprite = utils.SpriteFromPic(t.SpritePicture)
 
 }
 

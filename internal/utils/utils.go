@@ -53,3 +53,24 @@ func LoadSprite(path string) *pixel.Sprite {
 	}
 	return pixel.NewSprite(pic, pic.Bounds())
 }
+
+func LoadPicture(path string) *pixel.PictureData {
+	file, err := os.Open(path)
+	if err != nil {
+		panic(fmt.Sprintf("Error opening file '%s': %s", path, err.Error()))
+	}
+	defer file.Close()
+	img, _, err := image.Decode(file)
+	if err != nil {
+		panic(fmt.Sprintf("Error decoding file '%s': %s", path, err.Error()))
+	}
+	pic, err := pixel.PictureDataFromImage(img), nil
+	if err != nil {
+		panic(fmt.Sprintf("Error loading picture from file '%s': %s", path, err.Error()))
+	}
+	return pic
+}
+
+func SpriteFromPic(pic *pixel.PictureData) *pixel.Sprite {
+	return pixel.NewSprite(pic, pic.Bounds())
+}

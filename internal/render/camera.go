@@ -1,7 +1,6 @@
 package render
 
 import (
-	"fmt"
 	"karlc/treegame/internal/game"
 	"karlc/treegame/internal/models"
 	"karlc/treegame/internal/utils"
@@ -308,16 +307,26 @@ func (c *Camera) DrawTree(tree *models.Tree) {
 	spriteWidth = tree.Sprite.Frame().W() * scale
 	spriteHeight = tree.Sprite.Frame().H() * scale
 
-	fmt.Println(spriteWidth)
-
 	tree.Canvas.SetSmooth(true)
-	mat := pixel.IM
-	//mat = mat.Scaled(tree.Sprite.Frame().Center(), scale)
-	//mat = mat.Moved(tree.Canvas.Bounds().Center())
-	mat = mat.Scaled(tree.Sprite.Frame().Min, scale)
 
-	mat = mat.Moved(pixel.V(minX+spriteWidth/2, minY+spriteHeight/2))
-	tree.Sprite.Draw(tree.Canvas, mat)
+	x := minX + spriteWidth/2
+	y := minY + spriteHeight/2
+
+	//fmt.Println(spriteWidth)
+	//fmt.Println(tree.Width * c.unitScale)
+
+	for w := 0.0; w <= tree.Width*c.unitScale; w += spriteWidth {
+
+		for h := 0.0; h <= tree.Height*c.unitScale; h += spriteHeight {
+
+			mat := pixel.IM
+			//mat = mat.Scaled(tree.Sprite.Frame().Center(), scale)
+			//mat = mat.Moved(tree.Canvas.Bounds().Center())
+			mat = mat.Scaled(tree.Sprite.Frame().Min, scale)
+			mat = mat.Moved(pixel.V(x+w, y+h))
+			tree.Sprite.Draw(tree.Canvas, mat)
+		}
+	}
 
 	////////////
 

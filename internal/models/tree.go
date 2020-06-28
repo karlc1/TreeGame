@@ -1,6 +1,7 @@
 package models
 
 import (
+	"io/ioutil"
 	"karlc/treegame/internal/utils"
 	"math"
 
@@ -19,7 +20,9 @@ type Tree struct {
 	SpriteVecs     []pixel.Vec
 	Sprite         *pixel.Sprite
 	SpritePicture  *pixel.PictureData
-	Canvas         *pixelgl.Canvas
+	TileCanvas     *pixelgl.Canvas
+	ShaderCanvas   *pixelgl.Canvas
+	ShaderCode     string
 }
 
 func NewTree(w, h, x, b float64) *Tree {
@@ -29,17 +32,28 @@ func NewTree(w, h, x, b float64) *Tree {
 		PosX:          x,
 		Base:          b,
 		Circumference: 2 * math.Pi * (w / 2),
-		Canvas:        pixelgl.NewCanvas(pixel.ZR),
+		TileCanvas:    pixelgl.NewCanvas(pixel.ZR),
+		ShaderCanvas:  pixelgl.NewCanvas(pixel.ZR),
 	}
-	t.InitTreeDecor()
+	//t.InitTreeDecor()
 	t.InitSprite()
+	t.InitShader()
 	return t
 }
 
 func (t *Tree) InitSprite() {
 	t.SpritePicture = utils.LoadPicture("./assets/sprites/treetile.jpg")
 	t.Sprite = utils.SpriteFromPic(t.SpritePicture)
+}
 
+func (t *Tree) InitShader() {
+	b, err := ioutil.ReadFile("./assets/shaders/cylinder-mag.frag.glsl")
+	if err != nil {
+		panic("Error reading tree shader: " + err.Error())
+	}
+
+	t.ShaderCanvas.SetFragmentShader(string(b))
+	t.ShaderCode = string(b)
 }
 
 func (t *Tree) InitSprites() {

@@ -1,6 +1,7 @@
 package render
 
 import (
+	"image/color"
 	"karlc/treegame/internal/game"
 	"karlc/treegame/internal/models"
 	"karlc/treegame/internal/utils"
@@ -8,7 +9,6 @@ import (
 
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
-	"golang.org/x/image/colornames"
 	//"karlc/treegame/internal/models"
 	//rl "github.com/gen2brain/raylib-go/raylib"
 )
@@ -290,8 +290,12 @@ func (c *Camera) DrawTree(tree *models.Tree) {
 		tree.Base+tree.Height,
 	)
 	c.renderer.DrawPoint(maxX, maxY)
-	tree.Canvas.SetBounds(pixel.R(minX, minY, maxX, maxY))
-	tree.Canvas.Clear(colornames.Brown)
+	tree.TileCanvas.SetBounds(pixel.R(minX, minY, maxX, maxY))
+	//tree.Canvas.Clear(colornames.Brown)
+	tree.TileCanvas.Clear(color.Transparent)
+
+	tree.ShaderCanvas.SetBounds(tree.TileCanvas.Bounds())
+	tree.ShaderCanvas.Clear(color.Transparent)
 
 	////////////// Sprite /////////
 
@@ -307,7 +311,7 @@ func (c *Camera) DrawTree(tree *models.Tree) {
 	spriteWidth = tree.Sprite.Frame().W() * scale
 	spriteHeight = tree.Sprite.Frame().H() * scale
 
-	tree.Canvas.SetSmooth(true)
+	tree.TileCanvas.SetSmooth(true)
 
 	x := minX + spriteWidth/2
 	y := minY + spriteHeight/2
@@ -331,18 +335,18 @@ func (c *Camera) DrawTree(tree *models.Tree) {
 
 			//indicies = append(indicies, mat)
 
-			tree.Sprite.Draw(tree.Canvas, mat)
+			tree.Sprite.Draw(tree.TileCanvas, mat)
 			//tree.Sprite.Draw(batch, mat)
 		}
 	}
 
 	//batch.Draw(tree.Canvas)
 
+	tree.ShaderCanvas.Draw(tree.TileCanvas, pixel.IM.Moved(pixel.Vec{X: treeCenterX, Y: treeCenterY}))
+
 	////////////
 
-	tree.Canvas.Draw(c.renderer.window, pixel.IM.Moved(pixel.Vec{X: treeCenterX, Y: treeCenterY}))
-	c.renderer.DrawCanvas(tree)
-
+	tree.TileCanvas.Draw(c.renderer.window, pixel.IM.Moved(pixel.Vec{X: treeCenterX, Y: treeCenterY}))
 }
 
 func (c *Camera) DrawTreeSprites() {

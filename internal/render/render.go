@@ -131,10 +131,6 @@ func (r *Renderer) DrawPoint(x, y float64) {
 	r.DrawRectGreen(x, y, 15, 15, 0)
 }
 
-func (r *Renderer) DrawCanvas(t *models.Tree) {
-
-}
-
 // rotate rotates a corner around a center point theta radians
 func rotate(centerX, centerY, cornerX, cornerY, theta float64) (float64, float64) {
 	tempX, tempY := cornerX-centerX, cornerY-centerY

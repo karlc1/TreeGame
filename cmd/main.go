@@ -23,7 +23,9 @@ func main() {
 }
 
 func run() {
+
 	win := setupWindow()
+
 	inputHandler := game.NewInputHandler(win)
 	game := setupGame()
 	camera := setupCamera(game, win)

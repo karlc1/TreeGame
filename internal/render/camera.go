@@ -342,11 +342,10 @@ func (c *Camera) DrawTree(tree *models.Tree) {
 
 	//batch.Draw(tree.Canvas)
 
-	tree.ShaderCanvas.Draw(tree.TileCanvas, pixel.IM.Moved(pixel.Vec{X: treeCenterX, Y: treeCenterY}))
-
 	////////////
 
-	tree.TileCanvas.Draw(c.renderer.window, pixel.IM.Moved(pixel.Vec{X: treeCenterX, Y: treeCenterY}))
+	tree.TileCanvas.Draw(tree.ShaderCanvas, pixel.IM.Moved(pixel.Vec{X: treeCenterX, Y: treeCenterY}))
+	tree.ShaderCanvas.Draw(c.renderer.window, pixel.IM.Moved(pixel.Vec{X: treeCenterX, Y: treeCenterY}))
 }
 
 func (c *Camera) DrawTreeSprites() {

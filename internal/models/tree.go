@@ -47,13 +47,21 @@ func (t *Tree) InitSprite() {
 }
 
 func (t *Tree) InitShader() {
-	b, err := ioutil.ReadFile("./assets/shaders/cylinder-mag.frag.glsl")
+	var uTime float32 = 0.4
+	var uSpeed float32 = 0.4
+
+	t.ShaderCanvas.SetUniform("uTime", &uTime)
+	t.ShaderCanvas.SetUniform("uSpeed", &uSpeed)
+
+	//b, err := ioutil.ReadFile("./assets/shaders/cylinder-mag.frag.glsl")
+	b, err := ioutil.ReadFile("./assets/shaders/waterdist.frag.glsl")
 	if err != nil {
 		panic("Error reading tree shader: " + err.Error())
 	}
 
 	t.ShaderCanvas.SetFragmentShader(string(b))
 	t.ShaderCode = string(b)
+
 }
 
 func (t *Tree) InitSprites() {

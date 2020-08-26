@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"karlc/treegame/internal/game"
 	"karlc/treegame/internal/physics"
 	"karlc/treegame/internal/render"
@@ -25,6 +26,19 @@ func main() {
 func run() {
 
 	win := setupWindow()
+
+	var uTime float32 = 0.4
+	var uSpeed float32 = 0.4
+
+	win.Canvas().SetUniform("uTime", &uTime)
+	win.Canvas().SetUniform("uSpeed", &uSpeed)
+
+	b, err := ioutil.ReadFile("./assets/shaders/waterdist.frag.glsl")
+	if err != nil {
+		panic("Error reading tree shader: " + err.Error())
+	}
+
+	win.Canvas().SetFragmentShader(string(b))
 
 	inputHandler := game.NewInputHandler(win)
 	game := setupGame()
